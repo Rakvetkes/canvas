@@ -1,4 +1,4 @@
-package com.example.examplemod;
+package org.aki.helvetti;
 
 import java.util.List;
 import java.util.Set;
@@ -17,17 +17,10 @@ import net.neoforged.neoforge.common.ModConfigSpec;
 public class Config {
     private static final ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();
 
-    public static final ModConfigSpec.BooleanValue LOG_DIRT_BLOCK = BUILDER
-            .comment("Whether to log the dirt block on common setup")
-            .define("logDirtBlock", true);
-
-    public static final ModConfigSpec.IntValue MAGIC_NUMBER = BUILDER
-            .comment("A magic number")
-            .defineInRange("magicNumber", 42, 0, Integer.MAX_VALUE);
-
-    public static final ModConfigSpec.ConfigValue<String> MAGIC_NUMBER_INTRODUCTION = BUILDER
-            .comment("What you want the introduction message to be for the magic number")
-            .define("magicNumberIntroduction", "The magic number is... ");
+    public static final ModConfigSpec.ConfigValue<List<? extends String>> ALACY_COMMENT = BUILDER
+            .comment("What you want Alacy to say on startup. (Does anyone really read these?)")
+            .defineListAllowEmpty("alacyComment", List.of("I don't like your face.", "Nice to seeee you huh"),
+                    () -> "", obj -> obj instanceof String);
 
     // a list of strings that are treated as resource locations for items
     public static final ModConfigSpec.ConfigValue<List<? extends String>> ITEM_STRINGS = BUILDER
