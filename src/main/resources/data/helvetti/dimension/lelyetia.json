@@ -1,0 +1,156 @@
+{
+  "type": "helvetti:lelyetia_type",
+  "generator": {
+    "type": "helvetti:lelyetia_chunk_generator",
+    "biome_source": {
+      "type": "helvetti:lelyetia_biome_source",
+      "biomes": [
+        {
+          "parameters": {
+            "temperature": -0.1,
+            "humidity": 0.1,
+            "continentalness": 0.0,
+            "erosion": -0.1,
+            "depth": 0.0,
+            "weirdness": 0.0,
+            "offset": 0.0
+          },
+          "biome": "helvetti:golden_woods"
+        },
+        {
+          "parameters": {
+            "temperature": 0.1,
+            "humidity": 0.1,
+            "continentalness": 0.0,
+            "erosion": -0.1,
+            "depth": 0.0,
+            "weirdness": 0.0,
+            "offset": 0.0
+          },
+          "biome": "helvetti:vermilion_woods"
+        },
+        {
+          "parameters": {
+            "temperature": 0.1,
+            "humidity": -0.1,
+            "continentalness": 0.0,
+            "erosion": -0.1,
+            "depth": 0.0,
+            "weirdness": 0.0,
+            "offset": 0.0
+          },
+          "biome": "helvetti:golden_barrens"
+        },
+        {
+          "parameters": {
+            "temperature": -0.1,
+            "humidity": -0.1,
+            "continentalness": 0.0,
+            "erosion": -0.1,
+            "depth": 0.0,
+            "weirdness": 0.0,
+            "offset": 0.0
+          },
+          "biome": "helvetti:golden_barrens"
+        },
+        {
+          "parameters": {
+            "temperature": -0.1,
+            "humidity": 0.1,
+            "continentalness": 0.0,
+            "erosion": 0.1,
+            "depth": 0.0,
+            "weirdness": 0.0,
+            "offset": 0.0
+          },
+          "biome": "helvetti:golden_woods"
+        },
+        {
+          "parameters": {
+            "temperature": 0.1,
+            "humidity": 0.1,
+            "continentalness": 0.0,
+            "erosion": 0.1,
+            "depth": 0.0,
+            "weirdness": 0.0,
+            "offset": 0.0
+          },
+          "biome": "helvetti:vermilion_woods"
+        },
+        {
+          "parameters": {
+            "temperature": 0.1,
+            "humidity": -0.1,
+            "continentalness": 0.0,
+            "erosion": 0.1,
+            "depth": 0.0,
+            "weirdness": 0.0,
+            "offset": 0.0
+          },
+          "biome": "helvetti:golden_barrens"
+        },
+        {
+          "parameters": {
+            "temperature": -0.1,
+            "humidity": -0.1,
+            "continentalness": 0.0,
+            "erosion": 0.1,
+            "depth": 0.0,
+            "weirdness": 0.0,
+            "offset": 0.0
+          },
+          "biome": "helvetti:golden_barrens"
+        },
+        {
+          "parameters": {
+            "temperature": 0.1,
+            "humidity": 0.1,
+            "continentalness": 0.0,
+            "erosion": 0.0,
+            "depth": 0.0,
+            "weirdness": 0.0,
+            "offset": 0.0
+          },
+          "biome": "helvetti:lelyetian_stream"
+        },
+        {
+          "parameters": {
+            "temperature": 0.1,
+            "humidity": -0.1,
+            "continentalness": 0.0,
+            "erosion": 0.0,
+            "depth": 0.0,
+            "weirdness": 0.0,
+            "offset": 0.0
+          },
+          "biome": "helvetti:lelyetian_stream"
+        },
+        {
+          "parameters": {
+            "temperature": -0.1,
+            "humidity": 0.1,
+            "continentalness": 0.0,
+            "erosion": 0.0,
+            "depth": 0.0,
+            "weirdness": 0.0,
+            "offset": 0.0
+          },
+          "biome": "helvetti:lelyetian_stream"
+        },
+        {
+          "parameters": {
+            "temperature": -0.1,
+            "humidity": -0.1,
+            "continentalness": 0.0,
+            "erosion": 0.0,
+            "depth": 0.0,
+            "weirdness": 0.0,
+            "offset": 0.0
+          },
+          "biome": "helvetti:lelyetian_stream"
+        }
+      ]
+    },
+    "settings": "helvetti:lelyetia_noise_gen"
+  }
+}

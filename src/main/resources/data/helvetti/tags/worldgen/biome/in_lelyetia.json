@@ -1,0 +1,17 @@
+{
+  "replace": false,
+  "values": [
+    "helvetti:golden_woods",
+    "helvetti:vermilion_woods",
+    "helvetti:golden_barrens",
+    "helvetti:inverted_golden_woods",
+    "helvetti:inverted_vermilion_woods",
+    "helvetti:lelyetian_stream",
+
+    "helvetti:crimson_woods",
+    "helvetti:sanguine_thicket",
+    "helvetti:inverted_basilica",
+    "helvetti:fortress_mountains",
+    "helvetti:ascension_peak"
+  ]
+}
