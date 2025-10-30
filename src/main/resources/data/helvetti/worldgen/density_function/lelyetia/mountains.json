@@ -1,0 +1,33 @@
+{
+    "type": "minecraft:range_choice",
+    "input": "helvetti:lelyetia/erosion",
+    "min_inclusive": 0.2,
+    "max_exclusive": 1.001,
+    "when_in_range": {
+        "type": "minecraft:add",
+        "argument1": {
+            "type": "minecraft:add",
+            "argument1": 0.15,
+            "argument2": {
+                "type": "minecraft:mul",
+                "argument1": 0.15,
+                "argument2": {
+                    "type": "minecraft:noise",
+                    "noise": "minecraft:ridge",
+                    "xz_scale": 1,
+                    "y_scale": 0
+                }
+            }
+        },
+        "argument2": {
+            "type": "minecraft:mul",
+            "argument1": 4.9,
+            "argument2": {
+                "type": "minecraft:add",
+                "argument1": -0.8,
+                "argument2": "helvetti:lelyetia/continents"
+            }
+        }
+    },
+    "when_out_of_range": 0
+}

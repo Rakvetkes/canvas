@@ -1,0 +1,32 @@
+{
+  "type": "minecraft:add",
+  "argument1": 0.05,
+  "argument2": {
+    "type": "minecraft:mul",
+    "argument1": -1,
+    "argument2": {
+      "type": "minecraft:min",
+      "argument1": {
+        "type": "minecraft:min",
+        "argument1": {
+          "type": "minecraft:abs",
+          "argument": {
+            "type": "minecraft:add",
+            "argument1": "helvetti:lelyetia/continents",
+            "argument2": 0.025
+          }
+        },
+        "argument2": {
+          "type": "minecraft:abs",
+          "argument": {
+            "type": "minecraft:add",
+            "argument1": "helvetti:lelyetia/continents",
+            "argument2": -0.775
+          }
+        }
+      },
+      "argument2": 0.05
+    }
+  }
+}
+

@@ -1,5 +1,6 @@
 package org.aki.helvetti;
 
+import org.aki.helvetti.block.CFlippedGrassBlock;
 import org.aki.helvetti.worldgen.CBiomeSources;
 import org.aki.helvetti.worldgen.CChunkGenerators;
 import org.slf4j.Logger;
@@ -8,8 +9,12 @@ import com.mojang.logging.LogUtils;
 
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.material.MapColor;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -19,11 +24,16 @@ import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.BiomeColors;
+import net.minecraft.world.level.GrassColor;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
+import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredHolder;
+import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 // The value here should match an entry in the META-INF/neoforge.mods.toml file
@@ -40,9 +50,31 @@ public class CCanvasMain {
     // Create a Deferred Register to hold CreativeModeTabs which will all be registered under the "helvetti" namespace
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
 
+    // Register flipped grass block
+    public static final DeferredBlock<CFlippedGrassBlock> FLIPPED_GRASS_BLOCK = BLOCKS.register(
+        "flipped_grass_block",
+        () -> new CFlippedGrassBlock(
+            BlockBehaviour.Properties.of()
+                .mapColor(MapColor.GRASS)
+                .randomTicks()
+                .strength(0.6F)
+                .sound(SoundType.GRASS)
+        )
+    );
+    
+    // Register flipped grass block item
+    public static final DeferredItem<BlockItem> FLIPPED_GRASS_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(
+        "flipped_grass_block", 
+        FLIPPED_GRASS_BLOCK
+    );
+
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> MAIN_TAB = CREATIVE_MODE_TABS.register("helvetti", () -> CreativeModeTab.builder()
             .title(Component.translatable("itemGroup.helvetti")) //The language key for the title of your CreativeModeTab
-            .withTabsBefore(CreativeModeTabs.COMBAT).build());
+            .withTabsBefore(CreativeModeTabs.COMBAT)
+            .icon(() -> FLIPPED_GRASS_BLOCK_ITEM.get().getDefaultInstance())
+            .displayItems((parameters, output) -> {
+                output.accept(FLIPPED_GRASS_BLOCK_ITEM.get());
+            }).build());
 
     // The constructor for the mod class is the first code that is run when your mod is loaded.
     // FML will recognize some parameter types like IEventBus or ModContainer and pass them in automatically.
@@ -110,6 +142,28 @@ public class CCanvasMain {
             // Some client setup code
             LOGGER.info("Canvas of Helvetti initializing on client.");
             LOGGER.info("<Alacy> We're currently in {}", Minecraft.getInstance().getUser().getName());
+        }
+        
+        @SubscribeEvent
+        static void registerBlockColors(RegisterColorHandlersEvent.Block event) {
+            // Register biome-based color for flipped grass block
+            // The block uses tintindex 0 for the grass-colored parts
+            event.register((state, level, pos, tintIndex) -> {
+                // Return grass color based on biome
+                if (level != null && pos != null) {
+                    return BiomeColors.getAverageGrassColor(level, pos);
+                }
+                return GrassColor.getDefaultColor();
+            }, FLIPPED_GRASS_BLOCK.get());
+        }
+        
+        @SubscribeEvent
+        static void registerItemColors(RegisterColorHandlersEvent.Item event) {
+            // Register biome-based color for flipped grass block item
+            // Uses the default grass color for items
+            event.register((stack, tintIndex) -> {
+                return GrassColor.getDefaultColor();
+            }, FLIPPED_GRASS_BLOCK_ITEM.get());
         }
     }
 }

@@ -1,6 +1,5 @@
 package org.aki.helvetti.worldgen;
 
-import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -10,36 +9,42 @@ import net.minecraft.world.level.biome.BiomeSource;
 import net.minecraft.world.level.biome.Climate;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
 /**
  * Custom BiomeSource for the Lelyetia dimension
- * Provides a multi-noise based biome distribution system
+ * Uses sequential rule-based matching to determine biomes
+ * Each biome has parameter ranges, and the first matching biome is selected
  */
 public class CLelyetiaBiomeSource extends BiomeSource {
     public static final MapCodec<CLelyetiaBiomeSource> CODEC = RecordCodecBuilder.mapCodec(instance ->
         instance.group(
             Codec.list(
-                RecordCodecBuilder.<Pair<Climate.ParameterPoint, Holder<Biome>>>create(pairInstance ->
-                    pairInstance.group(
-                        Climate.ParameterPoint.CODEC.fieldOf("parameters").forGetter(Pair::getFirst),
-                        Biome.CODEC.fieldOf("biome").forGetter(Pair::getSecond)
-                    ).apply(pairInstance, Pair::of)
+                RecordCodecBuilder.<CBiomeEntry>create(entryInstance ->
+                    entryInstance.group(
+                        CBiomeParameterRange.CODEC.fieldOf("parameters").forGetter(CBiomeEntry::parameters),
+                        Biome.CODEC.fieldOf("biome").forGetter(CBiomeEntry::biome)
+                    ).apply(entryInstance, CBiomeEntry::new)
                 )
-            ).fieldOf("biomes").forGetter(source -> source.parameters.values())
-        ).apply(instance, CLelyetiaBiomeSource::fromList)
+            ).fieldOf("biomes").forGetter(source -> source.biomeEntries)
+        ).apply(instance, CLelyetiaBiomeSource::new)
     );
 
-    private final Climate.ParameterList<Holder<Biome>> parameters;
+    private final List<CBiomeEntry> biomeEntries;
+    private final Holder<Biome> defaultBiome;
 
-    private CLelyetiaBiomeSource(Climate.ParameterList<Holder<Biome>> parameters) {
-        this.parameters = parameters;
+    private CLelyetiaBiomeSource(List<CBiomeEntry> biomeEntries) {
+        this.biomeEntries = new ArrayList<>(biomeEntries);
+        // Use the last biome as default fallback
+        this.defaultBiome = biomeEntries.isEmpty() ? null : biomeEntries.get(biomeEntries.size() - 1).biome();
     }
 
-    private static CLelyetiaBiomeSource fromList(List<Pair<Climate.ParameterPoint, Holder<Biome>>> list) {
-        return new CLelyetiaBiomeSource(new Climate.ParameterList<>(list));
-    }
+    /**
+     * Represents a biome entry with its parameter range conditions
+     */
+    public record CBiomeEntry(CBiomeParameterRange parameters, Holder<Biome> biome) {}
 
     @Override
     protected MapCodec<? extends BiomeSource> codec() {
@@ -48,12 +53,22 @@ public class CLelyetiaBiomeSource extends BiomeSource {
 
     @Override
     protected Stream<Holder<Biome>> collectPossibleBiomes() {
-        return this.parameters.values().stream().map(Pair::getSecond);
+        return this.biomeEntries.stream().map(CBiomeEntry::biome);
     }
 
     @Override
     @Nonnull
     public Holder<Biome> getNoiseBiome(int x, int y, int z, @Nonnull Climate.Sampler sampler) {
-        return this.parameters.findValue(sampler.sample(x, y, z));
+        Climate.TargetPoint targetPoint = sampler.sample(x, y, z);
+        
+        // Sequential matching: return the first biome whose parameters match
+        for (CBiomeEntry entry : this.biomeEntries) {
+            if (entry.parameters().matches(targetPoint)) {
+                return entry.biome();
+            }
+        }
+        
+        // Fallback to default biome if no match found
+        return this.defaultBiome != null ? this.defaultBiome : this.biomeEntries.get(0).biome();
     }
 }
