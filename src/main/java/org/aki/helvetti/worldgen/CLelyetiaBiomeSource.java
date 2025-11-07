@@ -4,6 +4,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeSource;
 import net.minecraft.world.level.biome.Climate;
@@ -19,6 +20,10 @@ import java.util.stream.Stream;
  * Each biome has parameter ranges, and the first matching biome is selected
  */
 public class CLelyetiaBiomeSource extends BiomeSource {
+    /**
+     * List of inverted biome resource keys
+     */
+    public static final List<ResourceKey<Biome>> INVERTED_BIOMES = new ArrayList<>();
     public static final MapCodec<CLelyetiaBiomeSource> CODEC = RecordCodecBuilder.mapCodec(instance ->
         instance.group(
             Codec.list(

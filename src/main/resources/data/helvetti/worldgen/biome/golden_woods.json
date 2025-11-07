@@ -8,8 +8,8 @@
     "fog_color": 15262928,
     "water_color": 4159204,
     "water_fog_color": 329011,
-    "grass_color": 13937968,
-    "foliage_color": 13937968,
+    "grass_color": 8960871,
+    "foliage_color": 16761856,
     "mood_sound": {
       "sound": "minecraft:ambient.cave",
       "tick_delay": 6000,
@@ -32,7 +32,9 @@
     [],
     [],
     [],
-    [],
+    [
+      "helvetti:lelyetian_birch"
+    ],
     []
   ]
 }

@@ -3,12 +3,17 @@ package org.aki.helvetti;
 import org.aki.helvetti.block.CFlippedGrassBlock;
 import org.aki.helvetti.worldgen.CBiomeSources;
 import org.aki.helvetti.worldgen.CChunkGenerators;
+import org.aki.helvetti.worldgen.CLelyetiaBiomeSource;
+import org.aki.helvetti.worldgen.placement.CPlacementModifiers;
+import org.aki.helvetti.worldgen.tree.CTreePlacers;
 import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
 
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
@@ -94,6 +99,12 @@ public class CCanvasMain {
         
         // Register custom chunk generators
         CChunkGenerators.register(modEventBus);
+        
+        // Register custom tree placers
+        CTreePlacers.register(modEventBus);
+        
+        // Register custom placement modifiers
+        CPlacementModifiers.register(modEventBus);
 
         // Register ourselves for server and other game events we are interested in.
         // Note that this is necessary if and only if we want *this* class (ExampleMod) to respond directly to events.
@@ -110,6 +121,20 @@ public class CCanvasMain {
     private void commonSetup(FMLCommonSetupEvent event) {
         // Some common setup code
         LOGGER.info("Canvas of Helvetti initializing.");
+        
+        // Register inverted biomes
+        event.enqueueWork(() -> {
+            CLelyetiaBiomeSource.INVERTED_BIOMES.add(ResourceKey.create(Registries.BIOME, 
+                ResourceLocation.fromNamespaceAndPath(MODID, "inverted_golden_woods")));
+            CLelyetiaBiomeSource.INVERTED_BIOMES.add(ResourceKey.create(Registries.BIOME, 
+                ResourceLocation.fromNamespaceAndPath(MODID, "inverted_sunlit_grove")));
+            CLelyetiaBiomeSource.INVERTED_BIOMES.add(ResourceKey.create(Registries.BIOME, 
+                ResourceLocation.fromNamespaceAndPath(MODID, "inverted_crimson_thicket")));
+            CLelyetiaBiomeSource.INVERTED_BIOMES.add(ResourceKey.create(Registries.BIOME, 
+                ResourceLocation.fromNamespaceAndPath(MODID, "inverted_vermilion_woods")));
+            CLelyetiaBiomeSource.INVERTED_BIOMES.add(ResourceKey.create(Registries.BIOME, 
+                ResourceLocation.fromNamespaceAndPath(MODID, "inverted_basilica")));
+        });
 
         java.util.List<? extends String> comments = CConfig.ALACY_COMMENT.get();
         if (comments != null && !comments.isEmpty()) {
@@ -141,7 +166,7 @@ public class CCanvasMain {
         static void onClientSetup(FMLClientSetupEvent event) {
             // Some client setup code
             LOGGER.info("Canvas of Helvetti initializing on client.");
-            LOGGER.info("<Alacy> We're currently in {}", Minecraft.getInstance().getUser().getName());
+            LOGGER.info("<Alacy> We're currently surfing as {}", Minecraft.getInstance().getUser().getName());
         }
         
         @SubscribeEvent
