@@ -17,6 +17,7 @@ import org.aki.helvetti.CCanvasMain;
 import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.Map;
+import net.minecraft.core.BlockPos.MutableBlockPos;
 
 /**
  * Custom chunk generator for the Lelyetia dimension that wraps NoiseBasedChunkGenerator.
@@ -37,6 +38,16 @@ public class CLelyetiaChunkGenerator extends NoiseBasedChunkGenerator {
     );
 
     public static final int MIRROR_LEVEL = 200;
+    
+    // Carving noise calculation constants
+    private static final double EROSION_MULTIPLIER = 0.1;
+    private static final double CARVING_DEPTH_MULTIPLIER = 2000.0;
+    
+    // Continentalness ranges for terrain flipping
+    private static final double[][] CONTINENTALNESS_RANGES = {
+        {-0.895, -0.805}, {-0.695, -0.605}, {-0.495, -0.405},
+        {-0.295, -0.205}, {0.105, 0.195}, {0.305, 0.395}, {0.505, 0.595}
+    };
 
     /**
      * Flipping list - maps original block states to their flipped versions.
@@ -84,8 +95,6 @@ public class CLelyetiaChunkGenerator extends NoiseBasedChunkGenerator {
         
         // Get noise router for accessing noise functions
         var noiseRouter = randomState.router();
-        DensityFunction erosion = noiseRouter.erosion();
-        DensityFunction continentalness = noiseRouter.continents();
         
         // Get chunk position
         int chunkX = chunk.getPos().getMinBlockX();
@@ -98,19 +107,24 @@ public class CLelyetiaChunkGenerator extends NoiseBasedChunkGenerator {
                 int worldZ = chunkZ + localZ;
                 
                 // Sample noise values at this position
-                DensityFunction.SinglePointContext context = 
+                DensityFunction.SinglePointContext context =
                     new DensityFunction.SinglePointContext(worldX, 0, worldZ);
-                double erosionValue = erosion.compute(context);
-                double continentalnessValue = continentalness.compute(context);
-                
-                // Check if conditions are met
-                if (erosionValue >= 0.0 && continentalnessValue <= -0.1) {
+                double continentalness = noiseRouter.continents().compute(context);
+                double erosion = noiseRouter.erosion().compute(context);
+                double carvingNoise = getCarvingNoise(continentalness, erosion);
+
+                // If carving noise is non-negative, perform terrain flipping
+                if (carvingNoise >= 0.0) {
                     // Find original ground level (c)
                     int groundLevel = findGroundLevel(chunk, localX, localZ);
                     
                     if (groundLevel != Integer.MIN_VALUE) {
-                        // Flip blocks from y >= -groundLevel to MIRROR_LEVEL - y
-                        flipTerrainColumn(chunk, localX, localZ, groundLevel);
+                        int adjustedBase = (int)(-groundLevel - carvingNoise * CARVING_DEPTH_MULTIPLIER);
+                        // Clamp to valid range: minimum is minBuildHeight + 2, maximum is -2
+                        int minBound = chunk.getMinBuildHeight() + 2;
+                        int maxBound = -2;
+                        adjustedBase = Math.max(minBound, Math.min(maxBound, adjustedBase));
+                        flipTerrainColumn(chunk, localX, localZ, adjustedBase);
                     }
                 }
             }
@@ -118,12 +132,40 @@ public class CLelyetiaChunkGenerator extends NoiseBasedChunkGenerator {
     }
     
     /**
+     * Calculates the carving noise value based on continentalness and erosion.
+     * If out of defined ranges, returns CARVING_NOISE_DEFAULT.
+     * 
+     * @param continentalness The continentalness value to check
+     * @param erosion The erosion value to check
+     * @return the carving noise value, or CARVING_NOISE_DEFAULT if out of range
+     */
+    private double getCarvingNoise(double continentalness, double erosion) {
+        // Check each range
+        for (double[] range : CONTINENTALNESS_RANGES) {
+            if (continentalness >= range[0] && continentalness <= range[1]) {
+                double trend = Math.min(continentalness - range[0], range[1] - continentalness);
+                return trend + EROSION_MULTIPLIER * erosion;
+            }
+        }
+        
+        // Value is not in any range
+        return -0.1;
+    }
+    
+    /**
      * Finds the original ground level in a column.
      * Returns the highest non-air block Y coordinate.
+     * 
+     * @param chunk The chunk to search
+     * @param x Local x coordinate in chunk
+     * @param z Local z coordinate in chunk
+     * @return The Y coordinate of the highest non-air block, or Integer.MIN_VALUE if none found
      */
     private int findGroundLevel(ChunkAccess chunk, int x, int z) {
+        MutableBlockPos mutablePos = new MutableBlockPos();
         for (int y = chunk.getMaxBuildHeight() - 1; y >= chunk.getMinBuildHeight(); y--) {
-            BlockState state = chunk.getBlockState(new net.minecraft.core.BlockPos(x, y, z));
+            mutablePos.set(x, y, z);
+            BlockState state = chunk.getBlockState(mutablePos);
             if (!state.isAir()) {
                 return y;
             }
@@ -132,46 +174,50 @@ public class CLelyetiaChunkGenerator extends NoiseBasedChunkGenerator {
     }
     
     /**
-     * Flips terrain in a column from y >= -c to position MIRROR_LEVEL - y.
+     * Flips terrain in a column from y >= baseLevel to position MIRROR_LEVEL - y.
      * 
      * @param chunk The chunk to modify
      * @param x Local x coordinate in chunk
      * @param z Local z coordinate in chunk
-     * @param groundLevel The original ground level (c)
+     * @param baseLevel The level from which to start flipping
      */
-    private void flipTerrainColumn(ChunkAccess chunk, int x, int z, int groundLevel) {
-        int minY = -groundLevel;
-        int maxY = chunk.getMaxBuildHeight() - 1;
+    private void flipTerrainColumn(ChunkAccess chunk, int x, int z, int baseLevel) {
+        int minBuildHeight = chunk.getMinBuildHeight();
+        int maxBuildHeight = chunk.getMaxBuildHeight() - 1;
+        int minY = Math.max(baseLevel, minBuildHeight);
+        int maxY = maxBuildHeight;
         
-        // Store blocks that need to be flipped
-        Map<Integer, BlockState> blocksToFlip = new HashMap<>();
-        
-        // Collect all blocks from y >= -groundLevel
+        // Estimate capacity: assume average 20% of the height range contains blocks
+        int estimatedBlocks = (maxY - minY + 1) / 5;
+        Map<Integer, BlockState> blocksToFlip = new HashMap<>(estimatedBlocks);
+        MutableBlockPos mutablePos = new MutableBlockPos();
+
+        // Collect all blocks from y >= baseLevel
         for (int y = minY; y <= maxY; y++) {
-            if (y >= chunk.getMinBuildHeight() && y <= chunk.getMaxBuildHeight() - 1) {
-                BlockState state = chunk.getBlockState(new net.minecraft.core.BlockPos(x, y, z));
-                if (!state.isAir()) {
-                    int flippedY = MIRROR_LEVEL - y;
-                    // Only flip if target position is within world bounds
-                    if (flippedY >= chunk.getMinBuildHeight() && flippedY <= chunk.getMaxBuildHeight() - 1) {
-                        // Check if this block has a flipped version
-                        BlockState flippedState = getFlippedBlockState(state);
-                        blocksToFlip.put(flippedY, flippedState);
-                    }
+            mutablePos.set(x, y, z);
+            BlockState state = chunk.getBlockState(mutablePos);
+            if (!state.isAir()) {
+                int flippedY = MIRROR_LEVEL - y;
+                // Only flip if target position is within world bounds
+                if (flippedY >= minBuildHeight && flippedY <= maxBuildHeight) {
+                    // Check if this block has a flipped version
+                    BlockState flippedState = getFlippedBlockState(state);
+                    blocksToFlip.put(flippedY, flippedState);
                 }
             }
         }
         
         // Clear original blocks
+        BlockState airState = Blocks.AIR.defaultBlockState();
         for (int y = minY; y <= maxY; y++) {
-            if (y >= chunk.getMinBuildHeight() && y <= chunk.getMaxBuildHeight() - 1) {
-                chunk.setBlockState(new net.minecraft.core.BlockPos(x, y, z), Blocks.AIR.defaultBlockState(), false);
-            }
+            mutablePos.set(x, y, z);
+            chunk.setBlockState(mutablePos, airState, false);
         }
         
         // Place flipped blocks
         for (Map.Entry<Integer, BlockState> entry : blocksToFlip.entrySet()) {
-            chunk.setBlockState(new net.minecraft.core.BlockPos(x, entry.getKey(), z), entry.getValue(), false);
+            mutablePos.set(x, entry.getKey(), z);
+            chunk.setBlockState(mutablePos, entry.getValue(), false);
         }
     }
     

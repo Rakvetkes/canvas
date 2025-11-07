@@ -3,9 +3,9 @@
   "fixed_time": 2000,
   "piglin_safe": false,
   "coordinate_scale": 1.0,
-  "min_y": -64,
-  "height": 320,
-  "logical_height": 256,
+  "min_y": -128,
+  "height": 448,
+  "logical_height": 320,
   
   "effects": "minecraft:overworld",
   "infiniburn": "#minecraft:infiniburn_overworld",

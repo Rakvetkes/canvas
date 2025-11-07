@@ -1,5 +1,5 @@
 {
-  "has_precipitation": true,
+  "has_precipitation": false,
   "temperature": 0.9,
   "temperature_modifier": "none",
   "downfall": 0.2,

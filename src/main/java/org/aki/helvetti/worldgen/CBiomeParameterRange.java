@@ -4,38 +4,51 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.world.level.biome.Climate;
 
+import java.util.List;
+
 /**
  * Represents a range condition for climate parameters
  * Used to match biomes based on sequential rule checking
+ * 
+ * Each parameter is a list of ranges - a value matches if it falls within ANY of the ranges.
  */
 public record CBiomeParameterRange(
-    float minTemperature,
-    float maxTemperature,
-    float minHumidity,
-    float maxHumidity,
-    float minContinentalness,
-    float maxContinentalness,
-    float minErosion,
-    float maxErosion,
-    float minWeirdness,
-    float maxWeirdness,
-    float minDepth,
-    float maxDepth
+    List<Range> temperature,
+    List<Range> humidity,
+    List<Range> continentalness,
+    List<Range> erosion,
+    List<Range> weirdness,
+    List<Range> depth
 ) {
+    /**
+     * Represents a single range [min, max]
+     */
+    public record Range(float min, float max) {
+        public static final Codec<Range> CODEC = RecordCodecBuilder.create(instance ->
+            instance.group(
+                Codec.FLOAT.fieldOf("min").forGetter(Range::min),
+                Codec.FLOAT.fieldOf("max").forGetter(Range::max)
+            ).apply(instance, Range::new)
+        );
+        
+        /**
+         * Default range that matches everything
+         */
+        public static final Range ALL = new Range(-2.0f, 2.0f);
+        
+        public boolean contains(float value) {
+            return value >= min && value <= max;
+        }
+    }
+    
     public static final Codec<CBiomeParameterRange> CODEC = RecordCodecBuilder.create(instance ->
         instance.group(
-            Codec.FLOAT.optionalFieldOf("min_temperature", -2.0f).forGetter(CBiomeParameterRange::minTemperature),
-            Codec.FLOAT.optionalFieldOf("max_temperature", 2.0f).forGetter(CBiomeParameterRange::maxTemperature),
-            Codec.FLOAT.optionalFieldOf("min_humidity", -2.0f).forGetter(CBiomeParameterRange::minHumidity),
-            Codec.FLOAT.optionalFieldOf("max_humidity", 2.0f).forGetter(CBiomeParameterRange::maxHumidity),
-            Codec.FLOAT.optionalFieldOf("min_continentalness", -2.0f).forGetter(CBiomeParameterRange::minContinentalness),
-            Codec.FLOAT.optionalFieldOf("max_continentalness", 2.0f).forGetter(CBiomeParameterRange::maxContinentalness),
-            Codec.FLOAT.optionalFieldOf("min_erosion", -2.0f).forGetter(CBiomeParameterRange::minErosion),
-            Codec.FLOAT.optionalFieldOf("max_erosion", 2.0f).forGetter(CBiomeParameterRange::maxErosion),
-            Codec.FLOAT.optionalFieldOf("min_weirdness", -2.0f).forGetter(CBiomeParameterRange::minWeirdness),
-            Codec.FLOAT.optionalFieldOf("max_weirdness", 2.0f).forGetter(CBiomeParameterRange::maxWeirdness),
-            Codec.FLOAT.optionalFieldOf("min_depth", -2.0f).forGetter(CBiomeParameterRange::minDepth),
-            Codec.FLOAT.optionalFieldOf("max_depth", 2.0f).forGetter(CBiomeParameterRange::maxDepth)
+            Range.CODEC.listOf().optionalFieldOf("temperature", List.of(Range.ALL)).forGetter(CBiomeParameterRange::temperature),
+            Range.CODEC.listOf().optionalFieldOf("humidity", List.of(Range.ALL)).forGetter(CBiomeParameterRange::humidity),
+            Range.CODEC.listOf().optionalFieldOf("continentalness", List.of(Range.ALL)).forGetter(CBiomeParameterRange::continentalness),
+            Range.CODEC.listOf().optionalFieldOf("erosion", List.of(Range.ALL)).forGetter(CBiomeParameterRange::erosion),
+            Range.CODEC.listOf().optionalFieldOf("weirdness", List.of(Range.ALL)).forGetter(CBiomeParameterRange::weirdness),
+            Range.CODEC.listOf().optionalFieldOf("depth", List.of(Range.ALL)).forGetter(CBiomeParameterRange::depth)
         ).apply(instance, CBiomeParameterRange::new)
     );
 
@@ -43,16 +56,19 @@ public record CBiomeParameterRange(
      * Check if the given climate target point matches this parameter range
      */
     public boolean matches(Climate.TargetPoint targetPoint) {
-        return isInRange(targetPoint.temperature(), minTemperature, maxTemperature)
-            && isInRange(targetPoint.humidity(), minHumidity, maxHumidity)
-            && isInRange(targetPoint.continentalness(), minContinentalness, maxContinentalness)
-            && isInRange(targetPoint.erosion(), minErosion, maxErosion)
-            && isInRange(targetPoint.weirdness(), minWeirdness, maxWeirdness)
-            && isInRange(targetPoint.depth(), minDepth, maxDepth);
+        return matchesAny(targetPoint.temperature(), temperature)
+            && matchesAny(targetPoint.humidity(), humidity)
+            && matchesAny(targetPoint.continentalness(), continentalness)
+            && matchesAny(targetPoint.erosion(), erosion)
+            && matchesAny(targetPoint.weirdness(), weirdness)
+            && matchesAny(targetPoint.depth(), depth);
     }
 
-    private boolean isInRange(long value, float min, float max) {
+    /**
+     * Check if a value matches any of the ranges in the list
+     */
+    private boolean matchesAny(long value, List<Range> ranges) {
         float normalized = Climate.unquantizeCoord(value);
-        return normalized >= min && normalized <= max;
+        return ranges.stream().anyMatch(range -> range.contains(normalized));
     }
 }
