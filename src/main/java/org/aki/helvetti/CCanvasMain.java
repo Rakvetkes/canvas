@@ -1,6 +1,7 @@
 package org.aki.helvetti;
 
 import org.aki.helvetti.block.CFlippedGrassBlock;
+import org.aki.helvetti.entity.CEntityAttachments;
 import org.aki.helvetti.worldgen.CBiomeSources;
 import org.aki.helvetti.worldgen.CChunkGenerators;
 import org.aki.helvetti.worldgen.CLelyetiaBiomeSource;
@@ -105,6 +106,9 @@ public class CCanvasMain {
         
         // Register custom placement modifiers
         CPlacementModifiers.register(modEventBus);
+        
+        // Register entity attachments
+        CEntityAttachments.register(modEventBus);
 
         // Register ourselves for server and other game events we are interested in.
         // Note that this is necessary if and only if we want *this* class (ExampleMod) to respond directly to events.
@@ -141,8 +145,6 @@ public class CCanvasMain {
             String randomComment = comments.get(new java.util.Random().nextInt(comments.size()));
             LOGGER.info("<Alacy> {}", randomComment);
         }
-
-        CConfig.ITEM_STRINGS.get().forEach((item) -> LOGGER.info("<Alacy> We've got a {}", item));
     }
 
     // Add the example block item to the building blocks tab

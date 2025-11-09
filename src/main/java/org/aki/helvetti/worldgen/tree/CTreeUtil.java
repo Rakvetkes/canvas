@@ -15,9 +15,6 @@ import javax.annotation.Nonnull;
  * Utility class for tree generation in Lelyetia dimension.
  */
 public final class CTreeUtil {
-    private CTreeUtil() {
-        // Prevent instantiation
-    }
 
     /**
      * Checks if the given position is in an inverted biome.

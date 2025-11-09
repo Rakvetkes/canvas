@@ -1,0 +1,21 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "org.aki.helvetti.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "refmap": "helvetti.refmap.json",
+  "mixins": [
+    "MixinEntity",
+    "MixinLivingEntity",
+    "MixinServerGamePacketListenerImpl"
+  ],
+  "client": [
+    "MixinEntityRenderDispatcher",
+    "MixinEntityRenderer",
+    "MixinLevelRenderer",
+    "MixinMouseHandler"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
