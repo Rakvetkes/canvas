@@ -5,15 +5,20 @@
   "compatibilityLevel": "JAVA_21",
   "refmap": "helvetti.refmap.json",
   "mixins": [
-    "MixinEntity",
-    "MixinLivingEntity",
-    "MixinServerGamePacketListenerImpl"
+    "phys.MixinEntity",
+    "phys.MixinLivingEntity",
+    "phys.MixinFallingBlock",
+    "phys.MixinFallingBlockEntity",
+    "phys.MixinServerGamePacketListenerImpl"
   ],
   "client": [
-    "MixinEntityRenderDispatcher",
-    "MixinEntityRenderer",
-    "MixinLevelRenderer",
-    "MixinMouseHandler"
+    "render.MixinEntityRenderDispatcher",
+    "render.MixinEntityRenderer",
+    "render.MixinLivingEntityRenderer",
+    "render.MixinItemEntityRenderer",
+    "render.MixinFallingBlockEntityRenderer",
+    "render.MixinLevelRenderer",
+    "render.MixinMouseHandler"
   ],
   "injectors": {
     "defaultRequire": 1

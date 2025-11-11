@@ -1,14 +1,12 @@
-package org.aki.helvetti.mixin;
+package org.aki.helvetti.mixin.render;
 
 import net.minecraft.client.Camera;
 import net.minecraft.client.DeltaTracker;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.LightTexture;
 
-import org.aki.helvetti.entity.CEntityInversionManager;
+import org.aki.helvetti.client.CInversionManagerClient;
 import org.joml.Matrix4f;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -19,6 +17,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
  * Mixin to inject into LevelRenderer.renderLevel() to apply a 180-degree rotation around the z-axis
  * to the frustumMatrix parameter, causing the entire world to be rendered upside down.
  * Only applies when the local player is in an inverted state.
+ * 
+ *  -we have interesting issues! see MixinEntityRenderDispatcher for details- :)
+ * 
  */
 @Mixin(LevelRenderer.class)
 public abstract class MixinLevelRenderer {
@@ -44,12 +45,9 @@ public abstract class MixinLevelRenderer {
         Matrix4f frustumMatrix,
         Matrix4f projectionMatrix,
         CallbackInfo ci
-    ) {
-        // Get the local player (the player being rendered for)
-        LocalPlayer player = Minecraft.getInstance().player;
-        
+    ) {        
         // Check if player exists and is inverted
-        if (player != null && CEntityInversionManager.isEntityInverted(player)) {
+        if (CInversionManagerClient.isViewInverted()) {
             // Create rotation matrix for 180 degrees around Z-axis
             Matrix4f rotation = new Matrix4f().rotateZ((float) Math.PI);
             

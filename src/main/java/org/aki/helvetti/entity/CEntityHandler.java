@@ -21,7 +21,7 @@ public class CEntityHandler {
         
         // Only update on server side - client receives state via sync packets
         if (!entity.level().isClientSide()) {
-            CEntityInversionManager.updateInversionState(entity);
+            CInversionManager.updateInversionState(entity);
         }
     }
     
@@ -31,9 +31,9 @@ public class CEntityHandler {
         
         Optional<CEntityInversionData> existingData = entity.getExistingData(CEntityAttachments.ENTITY_INVERSION_DATA);
         if (existingData.isEmpty()) {
-            CEntityInversionManager.setDefaultState(entity);
+            CInversionManager.setDefaultState(entity);
         } else if (!entity.level().isClientSide()) {
-            CEntityInversionManager.syncOnJoin(entity);
+            CInversionManager.syncOnJoin(entity);
         }
     }
 }

@@ -2,13 +2,12 @@ package org.aki.helvetti.entity;
 
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.biome.Biome;
 import net.neoforged.neoforge.network.PacketDistributor;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 
-import org.aki.helvetti.CCanvasTags;
 import org.aki.helvetti.CConfig;
-import org.aki.helvetti.constants.CEntityConstants;
 import org.aki.helvetti.network.CEntityInversionSyncPacket;
 import org.aki.helvetti.worldgen.CLelyetiaBiomeSource;
 import net.minecraft.server.level.ServerPlayer;
@@ -19,34 +18,16 @@ import java.util.Optional;
  * Manager class for entity inversion state
  * Handles the configurable timing logic and biome condition checking
  */
-public class CEntityInversionManager {
-
-    /* CLIENT-SIDE ONLY */
-
-    /**
-     * Check if the entity type supports inversion rendering
-     * Uses a double blacklist filter: built-in blacklist + packet tag blacklist
-     *
-     * @param entity The entity to check
-     * @return true if the entity supports inversion rendering, false if it is in the blacklist
-     */
-    public static boolean shouldBeRenderedUpsideDown(Entity entity) {
-        if (entity == null) {
-            return false;
-        }
-
-        EntityType<?> type = entity.getType();
-
-        if (CEntityConstants.BUILTIN_NON_INVERTIBLE_TYPES.contains(type)
-            || type.is(CCanvasTags.NON_INVERTIBLE_ENTITIES)) {
-            return false;
-        }
-
-        return isEntityInverted(entity);
-    }
-
+public class CInversionManager {
 
     /* BOTH SERVER AND CLIENT-SIDE */
+
+    public static boolean shouldBeInverted(Level level, BlockPos blockPos) {
+        // Just biome check
+        Optional<ResourceKey<Biome>> biomeKey = level.getBiome(blockPos).unwrapKey();
+        return biomeKey.map(CLelyetiaBiomeSource.INVERTED_BIOMES::contains)
+            .orElse(false);
+    }
 
     /**
      * Check if the entity should be in an inverted state based on its current biome
@@ -59,19 +40,11 @@ public class CEntityInversionManager {
         if (entity == null || entity.level() == null) {
             return false;
         }
-        
-        // Get the biome at the entity's position
-        Optional<ResourceKey<Biome>> biomeKey = entity.level()
-            .getBiome(entity.blockPosition())
-            .unwrapKey();
-
-        // Check if the biome is in the inverted biomes list
-        return biomeKey.map(CLelyetiaBiomeSource.INVERTED_BIOMES::contains)
-            .orElse(false);
+        return shouldBeInverted(entity.level(), entity.blockPosition());
     }
 
     /** Logically inverted state check */
-    public static boolean isEntityInverted(Entity entity) {
+    public static boolean isLogicallyInverted(Entity entity) {
         return entity.getData(CEntityAttachments.ENTITY_INVERSION_DATA).isInverted();
     }
     

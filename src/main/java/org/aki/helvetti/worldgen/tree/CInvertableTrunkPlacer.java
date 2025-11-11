@@ -10,6 +10,9 @@ import net.minecraft.world.level.levelgen.feature.foliageplacers.FoliagePlacer;
 import net.minecraft.world.level.levelgen.feature.trunkplacers.TrunkPlacer;
 
 import javax.annotation.Nonnull;
+
+import org.aki.helvetti.util.CInvertedBlockPos;
+
 import java.util.List;
 import java.util.function.BiConsumer;
 

@@ -1,7 +1,7 @@
-package org.aki.helvetti.mixin;
+package org.aki.helvetti.mixin.phys;
 
 import net.minecraft.world.entity.LivingEntity;
-import org.aki.helvetti.entity.CEntityInversionManager;
+import org.aki.helvetti.entity.CInversionManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
@@ -29,6 +29,6 @@ public abstract class MixinLivingEntity {
     )
     private float modifyJumpPower(float jumpPower) {
         LivingEntity entity = (LivingEntity) (Object) this;
-        return CEntityInversionManager.isEntityInverted(entity) ? -jumpPower : jumpPower;
+        return CInversionManager.isLogicallyInverted(entity) ? -jumpPower : jumpPower;
     }
 }

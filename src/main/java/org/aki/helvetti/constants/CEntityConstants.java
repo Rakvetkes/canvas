@@ -23,11 +23,4 @@ public final class CEntityConstants {
         EntityType.TEXT_DISPLAY
     );
     
-    /**
-     * Synchronization interval for entity inversion state (in ticks)
-     * Entities sync their inversion state to clients every this many ticks
-     * Lower values = more network traffic but smoother updates
-     * Higher values = less network traffic but potential visual delays
-     */
-    public static final int SYNC_INTERVAL_TICKS = 20;
 }

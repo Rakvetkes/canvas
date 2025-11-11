@@ -1,10 +1,10 @@
-package org.aki.helvetti.mixin;
+package org.aki.helvetti.mixin.render;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.MouseHandler;
 import net.minecraft.client.player.LocalPlayer;
 
-import org.aki.helvetti.entity.CEntityInversionManager;
+import org.aki.helvetti.entity.CInversionManager;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -41,7 +41,7 @@ public abstract class MixinMouseHandler {
     )
     private void invertMouseInput(Args args) {
         LocalPlayer player = this.minecraft.player;
-        if (player != null && CEntityInversionManager.isEntityInverted(player)) {
+        if (player != null && CInversionManager.isLogicallyInverted(player)) {
             // Invert both X (left/right) and Y (up/down) movement
             args.set(0, -(double)args.get(0));
             args.set(1, -(double)args.get(1));

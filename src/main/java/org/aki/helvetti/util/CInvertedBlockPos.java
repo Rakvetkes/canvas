@@ -1,4 +1,4 @@
-package org.aki.helvetti.worldgen.tree;
+package org.aki.helvetti.util;
 
 import net.minecraft.core.BlockPos;
 
@@ -15,6 +15,10 @@ import com.google.errorprone.annotations.Immutable;
  * - below() actually moves up
  * - above(int) moves down by the specified amount
  * - below(int) moves up by the specified amount
+ * 
+ * 
+ * Don't use it too often... just some grammar sugar for specific cases
+ * 
  */
 @Immutable
 public class CInvertedBlockPos extends BlockPos {
