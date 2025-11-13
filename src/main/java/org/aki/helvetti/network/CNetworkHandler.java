@@ -10,7 +10,7 @@ import org.aki.helvetti.CCanvasMain;
  * Network registration for custom packets
  */
 @EventBusSubscriber(modid = CCanvasMain.MODID, bus = EventBusSubscriber.Bus.MOD)
-public class CNetworkHandler {
+public final class CNetworkHandler {
     
     @SubscribeEvent
     public static void registerPayloads(RegisterPayloadHandlersEvent event) {

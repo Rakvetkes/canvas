@@ -1,10 +1,9 @@
 package org.aki.helvetti.util;
 
+import com.google.errorprone.annotations.Immutable;
 import net.minecraft.core.BlockPos;
 
 import javax.annotation.Nonnull;
-
-import com.google.errorprone.annotations.Immutable;
 
 /**
  * A BlockPos subclass that inverts the behavior of above() and below() methods.

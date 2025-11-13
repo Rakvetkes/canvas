@@ -19,7 +19,7 @@ import org.aki.helvetti.entity.CInversionManager;
  * Mouse input (up/down and left/right) is handled by MixinMouseHandler.
  */
 @EventBusSubscriber(modid = CCanvasMain.MODID, bus = EventBusSubscriber.Bus.GAME, value = Dist.CLIENT)
-public class CInvertedInputHandler {
+public final class CInvertedInputHandler {
 
     /**
      * Inverts movement input (WASD and Space/Shift) when player is in inverted state.

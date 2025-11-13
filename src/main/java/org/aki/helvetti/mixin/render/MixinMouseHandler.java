@@ -3,7 +3,6 @@ package org.aki.helvetti.mixin.render;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.MouseHandler;
 import net.minecraft.client.player.LocalPlayer;
-
 import org.aki.helvetti.entity.CInversionManager;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;

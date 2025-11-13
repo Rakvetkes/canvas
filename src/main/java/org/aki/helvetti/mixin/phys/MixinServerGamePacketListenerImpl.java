@@ -1,14 +1,11 @@
 package org.aki.helvetti.mixin.phys;
 
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
-
 import com.llamalad7.mixinextras.sugar.Local;
-
-import org.spongepowered.asm.mixin.injection.At;
-
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import org.aki.helvetti.entity.CInversionManager;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
 @Mixin(ServerGamePacketListenerImpl.class)
 public abstract class MixinServerGamePacketListenerImpl {

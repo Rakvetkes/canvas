@@ -2,24 +2,24 @@ package org.aki.helvetti.worldgen;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.BlockPos.MutableBlockPos;
 import net.minecraft.core.Holder;
+import net.minecraft.server.level.WorldGenRegion;
 import net.minecraft.world.level.biome.BiomeSource;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.ChunkGenerator;
+import net.minecraft.world.level.levelgen.DensityFunction;
 import net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator;
 import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
 import net.minecraft.world.level.levelgen.RandomState;
-import net.minecraft.world.level.levelgen.DensityFunction;
-import net.minecraft.server.level.WorldGenRegion;
 import org.aki.helvetti.CCanvasMain;
 import org.aki.helvetti.CConfig;
-import org.aki.helvetti.constants.CWorldGenConstants;
+
 import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.Map;
-import net.minecraft.core.BlockPos.MutableBlockPos;
 
 /**
  * Custom chunk generator for the Lelyetia dimension that wraps NoiseBasedChunkGenerator.
@@ -38,6 +38,13 @@ public class CLelyetiaChunkGenerator extends NoiseBasedChunkGenerator {
             NoiseGeneratorSettings.CODEC.fieldOf("settings").forGetter(NoiseBasedChunkGenerator::generatorSettings)
         ).apply(instance, CLelyetiaChunkGenerator::new)
     );
+
+    public static final int MIRROR_LEVEL = 200;
+
+    public static final double[][] CONTINENTALNESS_RANGES = {
+            {-0.895, -0.805}, {-0.695, -0.605}, {-0.495, -0.405},
+            {-0.295, -0.205}, {0.105, 0.195}, {0.305, 0.395}, {0.505, 0.595}
+    };
 
     /**
      * Flipping list - maps original block states to their flipped versions.
@@ -134,7 +141,7 @@ public class CLelyetiaChunkGenerator extends NoiseBasedChunkGenerator {
         double erosionMultiplier = CConfig.EROSION_MULTIPLIER.get();
         
         // Check each range
-        for (double[] range : CWorldGenConstants.CONTINENTALNESS_RANGES) {
+        for (double[] range : CONTINENTALNESS_RANGES) {
             if (continentalness >= range[0] && continentalness <= range[1]) {
                 double trend = Math.min(continentalness - range[0], range[1] - continentalness);
                 return trend + erosionMultiplier * erosion;
@@ -190,7 +197,7 @@ public class CLelyetiaChunkGenerator extends NoiseBasedChunkGenerator {
             mutablePos.set(x, y, z);
             BlockState state = chunk.getBlockState(mutablePos);
             if (!state.isAir()) {
-                int flippedY = CWorldGenConstants.MIRROR_LEVEL - y;
+                int flippedY = MIRROR_LEVEL - y;
                 // Only flip if target position is within world bounds
                 if (flippedY >= minBuildHeight && flippedY <= maxBuildHeight) {
                     // Check if this block has a flipped version

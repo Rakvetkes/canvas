@@ -1,16 +1,8 @@
 package org.aki.helvetti;
 
-import org.aki.helvetti.block.CFlippedGrassBlock;
-import org.aki.helvetti.entity.CEntityAttachments;
-import org.aki.helvetti.worldgen.CBiomeSources;
-import org.aki.helvetti.worldgen.CChunkGenerators;
-import org.aki.helvetti.worldgen.CLelyetiaBiomeSource;
-import org.aki.helvetti.worldgen.placement.CPlacementModifiers;
-import org.aki.helvetti.worldgen.tree.CTreePlacers;
-import org.slf4j.Logger;
-
 import com.mojang.logging.LogUtils;
-
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
@@ -18,20 +10,18 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
+import net.minecraft.world.level.GrassColor;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BiomeColors;
-import net.minecraft.world.level.GrassColor;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 import net.neoforged.neoforge.common.NeoForge;
@@ -41,10 +31,18 @@ import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
+import org.aki.helvetti.block.CFlippedGrassBlock;
+import org.aki.helvetti.entity.CEntityAttachments;
+import org.aki.helvetti.worldgen.CBiomeSources;
+import org.aki.helvetti.worldgen.CChunkGenerators;
+import org.aki.helvetti.worldgen.CLelyetiaBiomeSource;
+import org.aki.helvetti.worldgen.placement.CPlacementModifiers;
+import org.aki.helvetti.worldgen.tree.CTreePlacers;
+import org.slf4j.Logger;
 
 // The value here should match an entry in the META-INF/neoforge.mods.toml file
 @Mod(CCanvasMain.MODID)
-public class CCanvasMain {
+public final class CCanvasMain {
     // Define mod id in a common place for everything to reference
     public static final String MODID = "helvetti";
     // Directly reference a slf4j logger

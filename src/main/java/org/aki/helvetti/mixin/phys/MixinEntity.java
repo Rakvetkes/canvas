@@ -1,12 +1,10 @@
 package org.aki.helvetti.mixin.phys;
 
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
-
-import net.minecraft.world.entity.Entity;
+import com.llamalad7.mixinextras.sugar.Local;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.entity.LivingEntity;
-
 import org.aki.helvetti.entity.CInversionManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -16,9 +14,6 @@ import org.spongepowered.asm.mixin.injection.ModifyArgs;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
-
-import net.minecraft.world.entity.MoverType;
-import net.minecraft.world.entity.Pose;
 
 /**
  * Mixin to modify Entity behavior based on the entity's inversion state
@@ -32,13 +27,15 @@ import net.minecraft.world.entity.Pose;
 public abstract class MixinEntity {
     
     @Shadow
-    protected boolean verticalCollision;
+    public boolean verticalCollision;
     
     @Shadow
-    protected boolean verticalCollisionBelow;
+    public boolean verticalCollisionBelow;
 
     @Shadow
     private float eyeHeight;
+
+    @Shadow private Vec3 position;
 
     // Gravity inversion
     @ModifyReturnValue(method = "getGravity", at = @At("RETURN"))
@@ -79,7 +76,6 @@ public abstract class MixinEntity {
         Entity entity = (Entity) (Object) this;
         return CInversionManager.isLogicallyInverted(entity) ? -y : y;
     }
-    
 
     // inversion of Y offset for foot position detection
     @ModifyVariable(
@@ -92,34 +88,18 @@ public abstract class MixinEntity {
         Entity entity = (Entity) (Object) this;
         return CInversionManager.isLogicallyInverted(entity) ? -yOffset : yOffset;
     }
-    
 
     // modify supporting block detection area for inverted entities
-    @ModifyVariable(
+    @ModifyArgs(
         method = "checkSupportingBlock",
-        at = @At(
-            value = "STORE",
-            ordinal = 0
-        ),
-        ordinal = 1,
-        name = "aabb1"
+        at = @At(value = "INVOKE", target = "Lnet/minecraft/world/phys/AABB;<init>(DDDDDD)V")
     )
-    private AABB modifyCheckSupportingBlockAABB(AABB aabb1, boolean onGround, Vec3 movement) {
+    private void modifyCheckSupportingBlockAABBArgs(Args args, @Local(ordinal = 0) AABB aabb) {
         Entity entity = (Entity) (Object) this;
-
-        if (!CInversionManager.isLogicallyInverted(entity) || !onGround) {
-            return aabb1;
+        if (CInversionManager.isLogicallyInverted(entity)) {
+            args.set(1, aabb.maxY);
+            args.set(4, aabb.maxY + 1.0E-5F);
         }
-        
-        AABB originalBB = entity.getBoundingBox();
-        return new AABB(
-            aabb1.minX,
-            originalBB.maxY,
-            aabb1.minZ,
-            aabb1.maxX,
-            originalBB.maxY + 1.0E-6,
-            aabb1.maxZ
-        );
     }
 
 
@@ -144,7 +124,7 @@ public abstract class MixinEntity {
         Entity entity = (Entity) (Object) this;
         return CInversionManager.isLogicallyInverted(entity) ? entity.getY() + entity.getBbHeight() - this.eyeHeight : original;
     }
-    // TODO: Do I need to do anything about leashing points?
+    // I'm assuming getRopeHoldPosition() is only used in EntityRenderer.renderLeash()
     // Logical layer... which means no shouldBeRenderedInverted() used here... I guess?
 
     
@@ -175,4 +155,27 @@ public abstract class MixinEntity {
         return original;
     }
     // TODO: Check nearby ground positions for real vehicles... look at those overrides. :)
+    // I am tired of these right now. :D
+
+
+    /* :)
+    @ModifyArgs(method = "fudgePositionAfterSizeChange", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/phys/Vec3;add(DDD)Lnet/minecraft/world/phys/Vec3;", ordinal = 0))
+    private void modifyFudgePositionAfterSizeChangeArgs(Args args, @Local(ordinal = 0, argsOnly = true) EntityDimensions dimensions) {
+        Entity entity = (Entity) (Object) this;
+        if (CInversionManager.isLogicallyInverted(entity)) {
+            args.set(1, (double) dimensions.height() - (double) args.get(1));
+        }
+    }*/
+
+    // pose change position adjustment for inverted entities
+    @Inject(method = "refreshDimensions", at = @At(value = "INVOKE",
+        target = "Lnet/minecraft/world/entity/EntityDimensions;eyeHeight()F", ordinal = 0))
+    private void onRefreshDimensions(CallbackInfo ci, @Local(ordinal = 0) EntityDimensions oldDimensions,
+                                     @Local(ordinal = 1) EntityDimensions newDimensions) {
+        Entity entity = (Entity) (Object) this;
+        if (CInversionManager.isLogicallyInverted(entity)) {
+            this.position = this.position.add(0.0, oldDimensions.height() - newDimensions.height(), 0.0);
+        }
+    }
+
 }

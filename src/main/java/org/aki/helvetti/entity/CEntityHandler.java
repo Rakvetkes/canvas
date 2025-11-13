@@ -1,19 +1,20 @@
 package org.aki.helvetti.entity;
 
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import org.aki.helvetti.CCanvasMain;
-import java.util.Optional;
 
 /**
  * Event handler for entity tick events
  * Updates entity inversion state every tick
  */
 @EventBusSubscriber(modid = CCanvasMain.MODID, bus = EventBusSubscriber.Bus.GAME)
-public class CEntityHandler {
+public final class CEntityHandler {
     
     @SubscribeEvent
     public static void onEntityTick(EntityTickEvent.Pre event) {
@@ -28,12 +29,16 @@ public class CEntityHandler {
     @SubscribeEvent
     public static void onEntityJoinLevel(EntityJoinLevelEvent event) {
         Entity entity = event.getEntity();
-        
-        Optional<CEntityInversionData> existingData = entity.getExistingData(CEntityAttachments.ENTITY_INVERSION_DATA);
-        if (existingData.isEmpty()) {
-            CInversionManager.setDefaultState(entity);
-        } else if (!entity.level().isClientSide()) {
-            CInversionManager.syncOnJoin(entity);
+
+        // Initialize inversion data on join
+        CInversionManager.initializeOnJoin(entity);
+
+        // When inverted, player will be pushed into ground if reentering game sneaking under a slab
+        // This cannot completely solve the issue, still happening randomly
+        // I gave up trying to fix it properly for now :)
+        if (entity instanceof Player && CInversionManager.isLogicallyInverted(entity)) {
+            entity.setPose(Pose.SWIMMING);
         }
     }
+
 }

@@ -6,21 +6,23 @@
   "refmap": "helvetti.refmap.json",
   "mixins": [
     "phys.MixinEntity",
-    "phys.MixinLivingEntity",
     "phys.MixinFallingBlock",
     "phys.MixinFallingBlockEntity",
+    "phys.MixinLivingEntity",
+    "phys.MixinPlayer",
     "phys.MixinServerGamePacketListenerImpl"
   ],
   "client": [
     "render.MixinEntityRenderDispatcher",
     "render.MixinEntityRenderer",
-    "render.MixinLivingEntityRenderer",
-    "render.MixinItemEntityRenderer",
-    "render.MixinFallingBlockEntityRenderer",
     "render.MixinLevelRenderer",
+    "render.MixinLivingEntityRenderer",
     "render.MixinMouseHandler"
   ],
   "injectors": {
     "defaultRequire": 1
+  },
+  "mixinextras": {
+    "minVersion": "0.5.0"
   }
 }

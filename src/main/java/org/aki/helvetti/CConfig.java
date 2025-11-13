@@ -1,14 +1,14 @@
 package org.aki.helvetti;
 
-import java.util.List;
-
 import net.neoforged.neoforge.common.ModConfigSpec;
+
+import java.util.List;
 
 /**
  * Configuration class for Canvas of Helvetti mod
  * Contains all user-configurable options
  */
-public class CConfig {
+public final class CConfig {
     private static final ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();
 
     // ==================== General Settings ====================

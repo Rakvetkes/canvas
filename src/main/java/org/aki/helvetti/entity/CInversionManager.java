@@ -1,16 +1,15 @@
 package org.aki.helvetti.entity;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.neoforged.neoforge.network.PacketDistributor;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.Level;
-
 import org.aki.helvetti.CConfig;
 import org.aki.helvetti.network.CEntityInversionSyncPacket;
 import org.aki.helvetti.worldgen.CLelyetiaBiomeSource;
-import net.minecraft.server.level.ServerPlayer;
 
 import java.util.Optional;
 
@@ -18,10 +17,11 @@ import java.util.Optional;
  * Manager class for entity inversion state
  * Handles the configurable timing logic and biome condition checking
  */
-public class CInversionManager {
+public final class CInversionManager {
 
     /* BOTH SERVER AND CLIENT-SIDE */
 
+    /** Check if the entity should be inverted based on the biome at the given position */
     public static boolean shouldBeInverted(Level level, BlockPos blockPos) {
         // Just biome check
         Optional<ResourceKey<Biome>> biomeKey = level.getBiome(blockPos).unwrapKey();
@@ -29,13 +29,7 @@ public class CInversionManager {
             .orElse(false);
     }
 
-    /**
-     * Check if the entity should be in an inverted state based on its current biome
-     * The condition is: the entity is in a biome that belongs to CLelyetiaBiomeSource.INVERTED_BIOMES
-     * 
-     * @param entity The entity to check
-     * @return true if the entity is in an inverted biome, false otherwise
-     */
+    /** Check if the entity should be inverted based on its current position */
     public static boolean shouldBeInverted(Entity entity) {
         if (entity == null || entity.level() == null) {
             return false;
@@ -47,14 +41,19 @@ public class CInversionManager {
     public static boolean isLogicallyInverted(Entity entity) {
         return entity.getData(CEntityAttachments.ENTITY_INVERSION_DATA).isInverted();
     }
-    
-    /**
-     * Initialize entity inversion state when an entity is first created
-     * This should only be called once when the entity is spawned/created, not when loaded from disk
-     * 
-     * @param entity The entity to initialize
-     */
-    public static void setDefaultState(Entity entity) {        
+
+    /** initialize the data field */
+    public static void initializeOnJoin(Entity entity) {
+        Optional<CEntityInversionData> data = entity.getExistingData(CEntityAttachments.ENTITY_INVERSION_DATA);
+        if (data.isEmpty()) {
+            setDefaultState(entity);
+        } else if (!entity.level().isClientSide()) {
+            syncToClients(entity, data.get().isInverted(), data.get().getTransitionTicks());
+        }
+    }
+
+    /** Set without the timer */
+    public static void setDefaultState(Entity entity) {
         CEntityInversionData data = new CEntityInversionData(shouldBeInverted(entity), 0);
         entity.setData(CEntityAttachments.ENTITY_INVERSION_DATA, data);
     }
@@ -108,21 +107,6 @@ public class CInversionManager {
         int syncInterval = CConfig.ENTITY_SYNC_INTERVAL.get();
         if (!entity.level().isClientSide() && (shouldTransit || entity.tickCount % syncInterval == 0)) {
             syncToClients(entity, isInverted, transitionTicks);
-        }
-    }
-    
-    /**
-     * Sync initial entity inversion state when an entity joins the level
-     * This ensures clients have the correct state when entities are loaded from disk
-     * 
-     * @param entity The entity to sync
-     */
-    public static void syncOnJoin(Entity entity) {
-        if (!entity.level().isClientSide()) {
-            Optional<CEntityInversionData> data = entity.getExistingData(CEntityAttachments.ENTITY_INVERSION_DATA);
-            if (data.isPresent()) {
-                syncToClients(entity, data.get().isInverted(), data.get().getTransitionTicks());
-            }
         }
     }
     

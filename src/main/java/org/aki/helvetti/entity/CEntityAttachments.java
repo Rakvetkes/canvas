@@ -11,7 +11,7 @@ import java.util.function.Supplier;
 /**
  * Registry for entity data attachments
  */
-public class CEntityAttachments {
+public final class CEntityAttachments {
     
     public static final DeferredRegister<AttachmentType<?>> ATTACHMENT_TYPES = 
         DeferredRegister.create(NeoForgeRegistries.ATTACHMENT_TYPES, CCanvasMain.MODID);
