@@ -9,6 +9,7 @@ import net.minecraft.world.level.levelgen.feature.configurations.TreeConfigurati
 import net.minecraft.world.level.levelgen.feature.foliageplacers.FoliagePlacer;
 import net.minecraft.world.level.levelgen.feature.trunkplacers.TrunkPlacer;
 import org.aki.helvetti.util.CInvertedBlockPos;
+import org.aki.helvetti.util.InvertiblePos;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -55,7 +56,7 @@ public abstract class CInvertableTrunkPlacer extends TrunkPlacer {
             @Nonnull BiConsumer<BlockPos, BlockState> blockSetter,
             @Nonnull RandomSource random,
             int freeTreeHeight,
-            @Nonnull BlockPos pos,
+            @InvertiblePos @Nonnull BlockPos pos,
             @Nonnull TreeConfiguration config);
 
     /**

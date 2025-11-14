@@ -10,7 +10,7 @@ import org.aki.helvetti.CCanvasMain;
 /**
  * Registry for custom placement modifiers
  */
-public class CPlacementModifiers {
+public final class CPlacementModifiers {
     public static final DeferredRegister<PlacementModifierType<?>> PLACEMENT_MODIFIERS = 
         DeferredRegister.create(Registries.PLACEMENT_MODIFIER_TYPE, CCanvasMain.MODID);
 

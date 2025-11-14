@@ -14,8 +14,8 @@ import net.minecraft.world.level.levelgen.DensityFunction;
 import net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator;
 import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
 import net.minecraft.world.level.levelgen.RandomState;
-import org.aki.helvetti.CCanvasMain;
 import org.aki.helvetti.CConfig;
+import org.aki.helvetti.block.CBlocks;
 
 import javax.annotation.Nonnull;
 import java.util.HashMap;
@@ -53,7 +53,7 @@ public class CLelyetiaChunkGenerator extends NoiseBasedChunkGenerator {
     private static final Map<BlockState, BlockState> FLIPPING_LIST = new HashMap<>();
     
     static {
-        FLIPPING_LIST.put(Blocks.GRASS_BLOCK.defaultBlockState(), CCanvasMain.FLIPPED_GRASS_BLOCK.get().defaultBlockState());
+        FLIPPING_LIST.put(Blocks.GRASS_BLOCK.defaultBlockState(), CBlocks.FLIPPED_GRASS_BLOCK.get().defaultBlockState());
     }
 
     /**

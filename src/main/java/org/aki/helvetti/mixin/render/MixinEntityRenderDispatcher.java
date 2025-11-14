@@ -36,7 +36,7 @@ public abstract class MixinEntityRenderDispatcher {
                                    PoseStack poseStack, MultiBufferSource bufferSource,
                                    int packedLight, CallbackInfo ci) {
         try {
-            if (CInversionManagerClient.isRenderedInvertedly(entity)) {
+            if (CInversionManagerClient.isRenderedInversely(entity)) {
                 // poseStack.scale(1.0f, -1.0f, 1.0f);
                 CInversionManagerClient.facialSpaghetti(poseStack, yRot);
                 poseStack.translate(0.0, -entity.getBbHeight(), 0.0);

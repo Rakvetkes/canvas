@@ -38,7 +38,7 @@ public abstract class MixinEntityRenderer<T extends Entity> {
     private void afterPushPose(T entity, float partialTick, PoseStack poseStack,
                                     MultiBufferSource buffer, Entity leashHolder,
                                     CallbackInfo ci) {
-        if (CInversionManagerClient.isRenderedInvertedly(entity)) {
+        if (CInversionManagerClient.isRenderedInversely(entity)) {
             poseStack.translate(0.0f, entity.getBbHeight(), 0.0f);
             CInversionManagerClient.facialSpaghetti(poseStack, entity.getYRot());
         }
@@ -56,7 +56,7 @@ public abstract class MixinEntityRenderer<T extends Entity> {
     private Vec3 modifyLeashHoldPosition(Vec3 original, T entity, float partialTick,
                                          PoseStack poseStack, MultiBufferSource buffer,
                                          Entity leashHolder) {
-        if (CInversionManagerClient.isRenderedInvertedly(entity)) {
+        if (CInversionManagerClient.isRenderedInversely(entity)) {
             Vec3 origin = leashHolder.getPosition(partialTick)
                 .add(0.0, leashHolder.getBbHeight() / 2.0, 0.0);
             return CInversionManagerClient.facialSpaghetti(origin, original, leashHolder.getYRot());
@@ -79,7 +79,7 @@ public abstract class MixinEntityRenderer<T extends Entity> {
     private void afterNameTagTranslate(Entity entity, Component displayName, 
                                       PoseStack poseStack, MultiBufferSource buffer, 
                                       int packedLight, float partialTick, CallbackInfo ci) {
-        if (CInversionManagerClient.isRenderedInvertedly(entity)) {
+        if (CInversionManagerClient.isRenderedInversely(entity)) {
             CInversionManagerClient.facialSpaghetti(poseStack, entity.getYRot());
         }
     }

@@ -26,7 +26,7 @@ public abstract class MixinLivingEntityRenderer {
                                  Operation<Float> original,
                                  @Local(argsOnly = true) LivingEntity entity) {
         float pitch = original.call(delta, start, end);
-        return CInversionManagerClient.isRenderedInvertedly(entity) ? -pitch : pitch;
+        return CInversionManagerClient.isRenderedInversely(entity) ? -pitch : pitch;
     }
 
 }

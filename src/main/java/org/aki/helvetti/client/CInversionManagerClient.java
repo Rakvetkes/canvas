@@ -58,7 +58,7 @@ public final class CInversionManagerClient {
     }
 
     /** Check if the given entity should be rendered in an inverted manner */
-    public static boolean isRenderedInvertedly(Entity entity) {
+    public static boolean isRenderedInversely(Entity entity) {
         if (entity == null) {
             return false;
         }

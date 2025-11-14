@@ -11,7 +11,7 @@ import org.aki.helvetti.CCanvasMain;
 /**
  * Registry for custom chunk generators
  */
-public class CChunkGenerators {
+public final class CChunkGenerators {
     public static final DeferredRegister<MapCodec<? extends ChunkGenerator>> CHUNK_GENERATORS = 
         DeferredRegister.create(BuiltInRegistries.CHUNK_GENERATOR, CCanvasMain.MODID);
 

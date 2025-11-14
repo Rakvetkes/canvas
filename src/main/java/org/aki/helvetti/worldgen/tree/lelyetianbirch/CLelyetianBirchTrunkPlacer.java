@@ -10,6 +10,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.feature.configurations.TreeConfiguration;
 import net.minecraft.world.level.levelgen.feature.foliageplacers.FoliagePlacer;
 import net.minecraft.world.level.levelgen.feature.trunkplacers.TrunkPlacerType;
+import org.aki.helvetti.util.InvertiblePos;
 import org.aki.helvetti.worldgen.tree.CInvertableTrunkPlacer;
 import org.aki.helvetti.worldgen.tree.CTreePlacers;
 
@@ -48,16 +49,17 @@ public class CLelyetianBirchTrunkPlacer extends CInvertableTrunkPlacer {
             @Nonnull BiConsumer<BlockPos, BlockState> blockSetter,
             @Nonnull RandomSource random,
             int freeTreeHeight,
-            @Nonnull BlockPos pos,
+            @InvertiblePos @Nonnull BlockPos pos,
             @Nonnull TreeConfiguration config) {
 
         // Set dirt below the tree
-        setDirtAt(level, blockSetter, random, pos.below(), config);
+        setDirtAt(level, blockSetter, random, pos.below().immutable(), config);
 
         int actualHeight = 0;
 
         // Place trunk blocks
-        while (actualHeight < freeTreeHeight && placeLog(level, blockSetter, random, pos.above(actualHeight), config)) {
+        while (actualHeight < freeTreeHeight && placeLog(level, blockSetter, random,
+            pos.above(actualHeight).immutable(), config)) {
             actualHeight++;
         }
 
@@ -79,7 +81,7 @@ public class CLelyetianBirchTrunkPlacer extends CInvertableTrunkPlacer {
             int radiusModifier = (random.nextDouble() < probability) ? -1 : 0;
             
             builder.add(new FoliagePlacer.FoliageAttachment(
-                pos.above(layerHeight),
+                pos.above(layerHeight).immutable(),
                 radiusModifier,
                 false // doubleTrunk
             ));

@@ -1,4 +1,7 @@
 {
   "itemGroup.helvetti": "赫尔维蒂涂鸦",
-  "block.helvetti.flipped_grass_block": "草方块"
+  "block.helvetti.flipped_grass_block": "草方块",
+  "block.helvetti.lelyetian_birch_leaves": "赫尔维蒂白桦树叶",
+  "block.helvetti.glowing_lelyetian_birch_leaves": "发光赫尔维蒂白桦树叶",
+  "block.helvetti.lelyetian_maple_leaves": "赫尔维蒂枫叶"
 }

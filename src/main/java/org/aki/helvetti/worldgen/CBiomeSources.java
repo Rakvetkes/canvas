@@ -11,7 +11,7 @@ import org.aki.helvetti.CCanvasMain;
 /**
  * Registry for custom biome sources
  */
-public class CBiomeSources {
+public final class CBiomeSources {
     public static final DeferredRegister<MapCodec<? extends BiomeSource>> BIOME_SOURCES = 
         DeferredRegister.create(BuiltInRegistries.BIOME_SOURCE, CCanvasMain.MODID);
 
