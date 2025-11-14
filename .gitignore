@@ -24,6 +24,6 @@ runs
 run-data
 docs
 todo.md
+.vscode
 
 repo
-.vscode
