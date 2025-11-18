@@ -42,7 +42,7 @@ public class CLelyetianMapleFoliagePlacer extends CInvertableFoliagePlacer {
     }
 
     @Override
-    protected void createFoliage(LevelSimulatedReader level, FoliageSetter blockSetter, RandomSource random, TreeConfiguration config, int maxFreeTreeHeight, FoliageAttachment attachment, int foliageHeight, int foliageRadius, int offset) {
+    protected void createFoliage(@Nonnull LevelSimulatedReader level, @Nonnull FoliageSetter blockSetter, @Nonnull RandomSource random, @Nonnull TreeConfiguration config, int maxFreeTreeHeight, @Nonnull FoliageAttachment attachment, int foliageHeight, int foliageRadius, int offset) {
         BlockPos pos = attachment.pos();
         for (int y = offset + foliageHeight / 2; y >= offset - foliageHeight / 2; --y) {
             placeLeavesRow(level, blockSetter, random, config, pos, Mth.floor(this.radius), y, false);
@@ -50,12 +50,12 @@ public class CLelyetianMapleFoliagePlacer extends CInvertableFoliagePlacer {
     }
 
     @Override
-    public int foliageHeight(RandomSource random, int height, TreeConfiguration config) {
+    public int foliageHeight(@Nonnull RandomSource random, int height, @Nonnull TreeConfiguration config) {
         return Mth.floor(this.radius) * 2 + 1;
     }
 
     @Override
-    protected boolean shouldSkipLocation(RandomSource random, int localX, int localY, int localZ, int range, boolean large) {
+    protected boolean shouldSkipLocation(@Nonnull RandomSource random, int localX, int localY, int localZ, int range, boolean large) {
         int localRad = localX * localX + localY * localY + localZ * localZ;
         return localRad > this.radius * this.radius;
     }

@@ -13,10 +13,9 @@ import net.minecraft.world.level.levelgen.feature.configurations.TreeConfigurati
 import net.minecraft.world.level.levelgen.feature.foliageplacers.FoliagePlacer;
 import net.minecraft.world.level.levelgen.feature.trunkplacers.TrunkPlacerType;
 import net.minecraft.world.phys.Vec3;
-import org.aki.helvetti.util.InvertiblePos;
+import org.aki.helvetti.util.Invertible;
 import org.aki.helvetti.worldgen.tree.CInvertableTrunkPlacer;
 import org.aki.helvetti.worldgen.tree.CTreePlacers;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -44,12 +43,12 @@ public class CLelyetianMapleTrunkPlacer extends CInvertableTrunkPlacer {
 
     @Override
     protected List<FoliagePlacer.FoliageAttachment> placeTrunkInternal(
-            @NotNull LevelSimulatedReader level,
-            @NotNull BiConsumer<BlockPos, BlockState> blockSetter,
-            @NotNull RandomSource random,
+            @Nonnull LevelSimulatedReader level,
+            @Nonnull BiConsumer<BlockPos, BlockState> blockSetter,
+            @Nonnull RandomSource random,
             int freeTreeHeight,
-            @InvertiblePos @NotNull BlockPos pos,
-            @NotNull TreeConfiguration config) {
+            @Invertible @Nonnull BlockPos pos,
+            @Nonnull TreeConfiguration config) {
 
         setDirtAt(level, blockSetter, random, pos.below().immutable(), config);
         int actualHeight = 0;
@@ -69,7 +68,6 @@ public class CLelyetianMapleTrunkPlacer extends CInvertableTrunkPlacer {
         int layerSpacing = 3;
         int layerCount = (actualHeight + layerSpacing - 2) / layerSpacing;
         int skippedLayerCount = layerCount / 2;
-        int layerBranchDiff = 3;
         int foliageSpacing = 3;
         float rotation = 105.0f, rIncOffset = 30.0f;
 
@@ -114,10 +112,10 @@ public class CLelyetianMapleTrunkPlacer extends CInvertableTrunkPlacer {
 
     public interface BranchPlacer {
         List<FoliagePlacer.FoliageAttachment> placeBranch(
-            @NotNull Function<BlockPos, Boolean> logPlacer,
-            @NotNull Function<BlockPos, FoliagePlacer.FoliageAttachment> foliagePlacer,
-            @NotNull RandomSource random,
-            @InvertiblePos @NotNull BlockPos startPos
+            @Nonnull Function<BlockPos, Boolean> logPlacer,
+            @Nonnull Function<BlockPos, FoliagePlacer.FoliageAttachment> foliagePlacer,
+            @Nonnull RandomSource random,
+            @Invertible @Nonnull BlockPos startPos
         );
     }
 
@@ -134,10 +132,10 @@ public class CLelyetianMapleTrunkPlacer extends CInvertableTrunkPlacer {
 
         @Override
         public List<FoliagePlacer.FoliageAttachment> placeBranch(
-            @NotNull Function<BlockPos, Boolean> logPlacer,
-            @NotNull Function<BlockPos, FoliagePlacer.FoliageAttachment> foliagePlacer,
-            @NotNull RandomSource random,
-            @InvertiblePos @NotNull BlockPos trunkPos) {
+            @Nonnull Function<BlockPos, Boolean> logPlacer,
+            @Nonnull Function<BlockPos, FoliagePlacer.FoliageAttachment> foliagePlacer,
+            @Nonnull RandomSource random,
+            @Invertible @Nonnull BlockPos trunkPos) {
             BlockPos currentPos = trunkPos.offset(direction);
             if (!logPlacer.apply(currentPos)) return ImmutableList.of();
             currentPos = currentPos.offset(direction.multiply(distToFoliage));
@@ -169,10 +167,10 @@ public class CLelyetianMapleTrunkPlacer extends CInvertableTrunkPlacer {
 
         @Override
         public List<FoliagePlacer.FoliageAttachment> placeBranch(
-            @NotNull Function<BlockPos, Boolean> logPlacer,
-            @NotNull Function<BlockPos, FoliagePlacer.FoliageAttachment> foliagePlacer,
-            @NotNull RandomSource random,
-            @InvertiblePos @NotNull BlockPos trunkPos) {
+            @Nonnull Function<BlockPos, Boolean> logPlacer,
+            @Nonnull Function<BlockPos, FoliagePlacer.FoliageAttachment> foliagePlacer,
+            @Nonnull RandomSource random,
+            @Invertible @Nonnull BlockPos trunkPos) {
             ImmutableList.Builder<FoliagePlacer.FoliageAttachment> builder = ImmutableList.builder();
 
             Vec3 currentDirection = this.direction;
@@ -215,7 +213,7 @@ public class CLelyetianMapleTrunkPlacer extends CInvertableTrunkPlacer {
             return builder.build();
         }
 
-        protected Vec3i getSubBranchDirection(@NotNull RandomSource random, Vec3 direction) {
+        protected Vec3i getSubBranchDirection(@Nonnull RandomSource random, Vec3 direction) {
             int r = random.nextInt();
             if (Mth.abs(r % 2) == 0) {
                 return directionStep(random, new Vec3(direction.z, 0.0, -direction.x).normalize());
@@ -233,7 +231,7 @@ public class CLelyetianMapleTrunkPlacer extends CInvertableTrunkPlacer {
 
     }
 
-    public static Vec3i locateAttachment(@NotNull RandomSource random, Vec3 direction, int steps, int lim) {
+    public static Vec3i locateAttachment(@Nonnull RandomSource random, Vec3 direction, int steps, int lim) {
         Vec3i ret = new Vec3i(0, 0, 0);
         while (steps-- > 0) {
             ret = ret.offset(directionStep(random, new Vec3(
@@ -244,7 +242,7 @@ public class CLelyetianMapleTrunkPlacer extends CInvertableTrunkPlacer {
         return ret;
     }
 
-    public static Vec3i directionStep(@NotNull RandomSource random, Vec3 direction) {
+    public static Vec3i directionStep(@Nonnull RandomSource random, Vec3 direction) {
         double wx = direction.x * direction.x;
         double wy = direction.y * direction.y;
         double wz = direction.z * direction.z;
@@ -260,18 +258,18 @@ public class CLelyetianMapleTrunkPlacer extends CInvertableTrunkPlacer {
         }
     }
 
-    public static Vec3i extendToSide(@NotNull RandomSource random, Vec3i original) {
+    public static Vec3i extendToSide(@Nonnull RandomSource random, Vec3i original) {
         return original.getX() == 0 ? new Vec3i(random.nextIntBetweenInclusive(-1, 1), 0, original.getZ())
             : new Vec3i(original.getX(), 0, random.nextIntBetweenInclusive(-1, 1));
     }
 
-    public static Vec3i horizontalOffset(@NotNull RandomSource random) {
+    public static Vec3i horizontalOffset(@Nonnull RandomSource random) {
         int x = random.nextIntBetweenInclusive(-1, 1);
         int z = x == 0 ? (random.nextIntBetweenInclusive(-1, 1)) : 0;
         return new Vec3i(x, 0, z);
     }
 
-    public static int randInt(@NotNull RandomSource random, int origin, int range) {
+    public static int randInt(@Nonnull RandomSource random, int origin, int range) {
         return random.nextIntBetweenInclusive(origin, origin + range - 1);
     }
 

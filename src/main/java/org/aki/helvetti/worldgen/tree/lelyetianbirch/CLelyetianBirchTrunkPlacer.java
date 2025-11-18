@@ -10,7 +10,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.feature.configurations.TreeConfiguration;
 import net.minecraft.world.level.levelgen.feature.foliageplacers.FoliagePlacer;
 import net.minecraft.world.level.levelgen.feature.trunkplacers.TrunkPlacerType;
-import org.aki.helvetti.util.InvertiblePos;
+import org.aki.helvetti.util.Invertible;
 import org.aki.helvetti.worldgen.tree.CInvertableTrunkPlacer;
 import org.aki.helvetti.worldgen.tree.CTreePlacers;
 
@@ -49,7 +49,7 @@ public class CLelyetianBirchTrunkPlacer extends CInvertableTrunkPlacer {
             @Nonnull BiConsumer<BlockPos, BlockState> blockSetter,
             @Nonnull RandomSource random,
             int freeTreeHeight,
-            @InvertiblePos @Nonnull BlockPos pos,
+            @Invertible @Nonnull BlockPos pos,
             @Nonnull TreeConfiguration config) {
 
         // Set dirt below the tree

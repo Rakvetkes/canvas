@@ -91,7 +91,7 @@ public class CInvertedBlockPos extends BlockPos {
      */
     @Override
     @Nonnull
-    public CInvertedBlockPos offset(Vec3i vec3i) {
+    public CInvertedBlockPos offset(@Nonnull Vec3i vec3i) {
         return offset(vec3i.getX(), vec3i.getY(), vec3i.getZ());
     }
     
