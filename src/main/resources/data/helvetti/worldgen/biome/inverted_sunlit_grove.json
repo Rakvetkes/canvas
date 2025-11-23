@@ -17,6 +17,7 @@
       "offset": 2.0
     }
   },
+  "inverted": "helvetti:sunlit_grove",
   "spawners": {},
   "spawn_costs": {},
   "carvers": {

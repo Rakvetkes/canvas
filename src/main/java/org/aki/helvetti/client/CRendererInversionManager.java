@@ -9,12 +9,12 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import org.aki.helvetti.CCanvasTags;
-import org.aki.helvetti.entity.CInversionManager;
+import org.aki.helvetti.feature.CEntityInversionManager;
 
 import java.util.Set;
 
 @OnlyIn(Dist.CLIENT)
-public final class CInversionManagerClient {
+public final class CRendererInversionManager {
 
     public static final Set<EntityType<?>> BUILTIN_NON_INVERTIBLE_TYPES = Set.of(
             EntityType.MARKER,
@@ -26,7 +26,7 @@ public final class CInversionManagerClient {
     /** Check if the local player's view is inverted */
     public static boolean isViewInverted() {
         LocalPlayer player = Minecraft.getInstance().player;
-        return player != null && CInversionManager.isLogicallyInverted(player);
+        return player != null && CEntityInversionManager.isLogicallyInverted(player);
     }
 
     /** Apply a rotation around the facing axis defined by a Y rotation */
@@ -66,11 +66,11 @@ public final class CInversionManagerClient {
         EntityType<?> type = entity.getType();
 
         if (BUILTIN_NON_INVERTIBLE_TYPES.contains(type)
-            || type.is(CCanvasTags.NON_INVERTIBLE_ENTITIES)) {
+            || type.is(CCanvasTags.NOT_RENDERED_INVERSELY)) {
             return false;
         }
 
-        return CInversionManager.isLogicallyInverted(entity);
+        return CEntityInversionManager.isLogicallyInverted(entity);
     }
 
 }

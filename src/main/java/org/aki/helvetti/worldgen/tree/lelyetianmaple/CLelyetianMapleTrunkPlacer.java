@@ -57,6 +57,7 @@ public class CLelyetianMapleTrunkPlacer extends CInvertableTrunkPlacer {
             actualHeight++;
         }
 
+        // TODO: want logs to be directed
         ImmutableList.Builder<FoliagePlacer.FoliageAttachment> builder = ImmutableList.builder();
         Function<BlockPos, Boolean> logPlacer = pos1 -> placeLog(level, blockSetter, random, pos1, config);
         Function<BlockPos, FoliagePlacer.FoliageAttachment> foliagePlacer = pos1 ->

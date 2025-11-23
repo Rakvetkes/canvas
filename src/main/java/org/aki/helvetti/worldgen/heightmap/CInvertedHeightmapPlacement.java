@@ -1,4 +1,4 @@
-package org.aki.helvetti.worldgen.placement;
+package org.aki.helvetti.worldgen.heightmap;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;

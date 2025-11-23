@@ -5,7 +5,7 @@ import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.LightTexture;
-import org.aki.helvetti.client.CInversionManagerClient;
+import org.aki.helvetti.client.CRendererInversionManager;
 import org.joml.Matrix4f;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -46,7 +46,7 @@ public abstract class MixinLevelRenderer {
         CallbackInfo ci
     ) {        
         // Check if player exists and is inverted
-        if (CInversionManagerClient.isViewInverted()) {
+        if (CRendererInversionManager.isViewInverted()) {
             // Create rotation matrix for 180 degrees around Z-axis
             Matrix4f rotation = new Matrix4f().rotateZ((float) Math.PI);
             

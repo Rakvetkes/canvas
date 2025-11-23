@@ -1,17 +1,17 @@
 {
-  "replace": false,
-  "values": [
-    "helvetti:flipped_grass_block",
-    "minecraft:dirt",
-    "minecraft:stone",
-    "minecraft:sandstone",
-    "minecraft:red_sandstone",
-    "minecraft:terracotta",
-    "minecraft:white_terracotta",
-    "minecraft:orange_terracotta",
-    "minecraft:yellow_terracotta",
-    "minecraft:brown_terracotta",
-    "minecraft:red_terracotta",
-    "minecraft:light_gray_terracotta"
-  ]
+    "replace": false,
+    "values": [
+        "helvetti:flipped_grass_block",
+        "minecraft:dirt",
+        "minecraft:stone",
+        "minecraft:sandstone",
+        "minecraft:red_sandstone",
+        "minecraft:terracotta",
+        "minecraft:white_terracotta",
+        "minecraft:orange_terracotta",
+        "minecraft:yellow_terracotta",
+        "minecraft:brown_terracotta",
+        "minecraft:red_terracotta",
+        "minecraft:light_gray_terracotta"
+    ]
 }

@@ -1,8 +1,10 @@
 package org.aki.helvetti.worldgen;
 
+import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos.MutableBlockPos;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.server.level.WorldGenRegion;
 import net.minecraft.world.level.biome.BiomeSource;
@@ -14,8 +16,13 @@ import net.minecraft.world.level.levelgen.DensityFunction;
 import net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator;
 import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
 import net.minecraft.world.level.levelgen.RandomState;
-import org.aki.helvetti.CConfig;
+import net.minecraft.world.level.StructureManager;
+import net.minecraft.resources.ResourceLocation;
+
 import org.aki.helvetti.block.CBlocks;
+import org.aki.helvetti.feature.CBiomeInversionManager;
+import org.aki.helvetti.worldgen.structure.CLandmarkManager;
+import org.aki.helvetti.worldgen.structure.landmarks.CLandmarkTypes;
 
 import javax.annotation.Nonnull;
 import java.util.HashMap;
@@ -40,11 +47,6 @@ public class CLelyetiaChunkGenerator extends NoiseBasedChunkGenerator {
     );
 
     public static final int MIRROR_LEVEL = 200;
-
-    public static final double[][] CONTINENTALNESS_RANGES = {
-            {-0.895, -0.805}, {-0.695, -0.605}, {-0.495, -0.405},
-            {-0.295, -0.205}, {0.105, 0.195}, {0.305, 0.395}, {0.505, 0.595}
-    };
 
     /**
      * Flipping list - maps original block states to their flipped versions.
@@ -85,7 +87,7 @@ public class CLelyetiaChunkGenerator extends NoiseBasedChunkGenerator {
      * 3. If conditions met, flips blocks from y >= -c to position MIRROR_LEVEL - y
      */
     @Override
-    public void buildSurface(@Nonnull WorldGenRegion region, @Nonnull net.minecraft.world.level.StructureManager structures, 
+    public void buildSurface(@Nonnull WorldGenRegion region, @Nonnull StructureManager structures, 
                             @Nonnull RandomState randomState, @Nonnull ChunkAccess chunk) {
         // First, let the parent class generate the normal terrain
         super.buildSurface(region, structures, randomState, chunk);
@@ -102,22 +104,23 @@ public class CLelyetiaChunkGenerator extends NoiseBasedChunkGenerator {
             for (int localZ = 0; localZ < 16; localZ++) {
                 int worldX = chunkX + localX;
                 int worldZ = chunkZ + localZ;
-                
-                // Sample noise values at this position
-                DensityFunction.SinglePointContext context =
-                    new DensityFunction.SinglePointContext(worldX, 0, worldZ);
-                double continentalness = noiseRouter.continents().compute(context);
-                double erosion = noiseRouter.erosion().compute(context);
-                double carvingNoise = getCarvingNoise(continentalness, erosion);
 
-                // If carving noise is non-negative, perform terrain flipping
-                if (carvingNoise >= 0.0) {
-                    // Find original ground level (c)
-                    int groundLevel = findGroundLevel(chunk, localX, localZ);
+                if (CBiomeInversionManager.isBiomeInverted(region.getBiome(new BlockPos(worldX, 0, worldZ)))) {
+                    DensityFunction.SinglePointContext context = new DensityFunction.SinglePointContext(worldX, 0, worldZ);
+                    double continentalness = noiseRouter.continents().compute(context);
+                    double erosion = noiseRouter.erosion().compute(context);
+                    double noiseCarving = getNoiseCarving(continentalness, erosion);
+
+                    Pair<ResourceLocation, Double> nearestLandmark = CLandmarkManager
+                        .getNearestInfluentialLandmark(worldX, worldZ, randomState.sampler());
+                    double landmarkCarving = nearestLandmark == null ? 0.0 : CLandmarkTypes
+                        .get(nearestLandmark.getFirst()).getLandmarkCarving(nearestLandmark.getSecond());
                     
+                    double finalCarving = noiseCarving * 0.5 + landmarkCarving * 0.5;
+                    int groundLevel = findGroundLevel(chunk, localX, localZ);
+
                     if (groundLevel != Integer.MIN_VALUE) {
-                        double carvingDepthMultiplier = CConfig.CARVING_DEPTH_MULTIPLIER.get();
-                        int adjustedBase = (int)(-groundLevel - carvingNoise * carvingDepthMultiplier);
+                        int adjustedBase = (int) (-groundLevel - finalCarving * 150.0);
                         // Clamp to valid range: minimum is minBuildHeight + 2, maximum is -2
                         int minBound = chunk.getMinBuildHeight() + 2;
                         int maxBound = -2;
@@ -131,25 +134,16 @@ public class CLelyetiaChunkGenerator extends NoiseBasedChunkGenerator {
     
     /**
      * Calculates the carving noise value based on continentalness and erosion.
-     * If out of defined ranges, returns CARVING_NOISE_DEFAULT.
      * 
      * @param continentalness The continentalness value to check
      * @param erosion The erosion value to check
-     * @return the carving noise value, or CARVING_NOISE_DEFAULT if out of range
+     * @return the carving noise value
      */
-    private double getCarvingNoise(double continentalness, double erosion) {
-        double erosionMultiplier = CConfig.EROSION_MULTIPLIER.get();
-        
-        // Check each range
-        for (double[] range : CONTINENTALNESS_RANGES) {
-            if (continentalness >= range[0] && continentalness <= range[1]) {
-                double trend = Math.min(continentalness - range[0], range[1] - continentalness);
-                return trend + erosionMultiplier * erosion;
-            }
-        }
-        
-        // Value is not in any range
-        return -0.1;
+    private double getNoiseCarving(double continentalness, double erosion) {
+        double lowerContinents = Math.floor(continentalness * 10.0) / 10.0;
+        double upperContinents = Math.ceil(continentalness * 10.0) / 10.0;
+        double trend = Math.min(continentalness - lowerContinents, upperContinents - continentalness) * 20.0;
+        return trend * 0.6 + Math.abs(erosion) * 0.3 + 0.1;
     }
     
     /**

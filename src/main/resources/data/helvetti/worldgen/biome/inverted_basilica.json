@@ -17,6 +17,7 @@
       "offset": 2.0
     }
   },
+  "inverted": null,
   "spawners": {},
   "spawn_costs": {},
   "carvers": {

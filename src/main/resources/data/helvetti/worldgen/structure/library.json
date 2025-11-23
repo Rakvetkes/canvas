@@ -1,0 +1,6 @@
+{
+  "type": "minecraft:desert_pyramid",
+  "biomes": "#helvetti:has_structure/library",
+  "spawn_overrides": {},
+  "step": "surface_structures"
+}

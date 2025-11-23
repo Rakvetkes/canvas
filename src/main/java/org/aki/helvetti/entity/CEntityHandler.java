@@ -8,6 +8,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import org.aki.helvetti.CCanvasMain;
+import org.aki.helvetti.feature.CEntityInversionManager;
 
 /**
  * Event handler for entity tick events
@@ -17,26 +18,27 @@ import org.aki.helvetti.CCanvasMain;
 public final class CEntityHandler {
     
     @SubscribeEvent
-    public static void onEntityTick(EntityTickEvent.Pre event) {
+    static void onEntityTick(EntityTickEvent.Pre event) {
         Entity entity = event.getEntity();
         
         // Only update on server side - client receives state via sync packets
         if (!entity.level().isClientSide()) {
-            CInversionManager.updateInversionState(entity);
+            CEntityInversionManager.updateInversionState(entity);
         }
     }
     
     @SubscribeEvent
-    public static void onEntityJoinLevel(EntityJoinLevelEvent event) {
+    static void onEntityJoinLevel(EntityJoinLevelEvent event) {
         Entity entity = event.getEntity();
 
         // Initialize inversion data on join
-        CInversionManager.initializeOnJoin(entity);
+        CEntityInversionManager.initializeOnJoin(entity);
 
+        // TODO: [ISSUE] A further research into the bug mechanism
         // When inverted, player will be pushed into ground if reentering game sneaking under a slab
         // This cannot completely solve the issue, still happening randomly
         // I gave up trying to fix it properly for now :)
-        if (entity instanceof Player && CInversionManager.isLogicallyInverted(entity)) {
+        if (entity instanceof Player && CEntityInversionManager.isLogicallyInverted(entity)) {
             entity.setPose(Pose.SWIMMING);
         }
     }

@@ -5,7 +5,8 @@ import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.FallingBlock;
-import org.aki.helvetti.entity.CInversionManager;
+
+import org.aki.helvetti.feature.CBlockInversionManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
@@ -29,7 +30,7 @@ public abstract class MixinFallingBlock {
         )
     )
     private BlockPos cal1(BlockPos original, @Local(ordinal = 0) BlockPos pos, @Local(ordinal = 0) ServerLevel level) {
-        return CInversionManager.shouldBeInverted(level, pos) ? pos.above() : original;
+        return CBlockInversionManager.shouldBeInverted(level, pos) ? pos.above() : original;
     }
 
     // BlockPos.getY()
@@ -42,7 +43,7 @@ public abstract class MixinFallingBlock {
         )
     )
     private int cal2(int original, @Local(ordinal = 0) BlockPos pos, @Local(ordinal = 0) ServerLevel level) {
-        return CInversionManager.shouldBeInverted(level, pos) ? -original : original;
+        return CBlockInversionManager.shouldBeInverted(level, pos) ? -original : original;
     }
 
     // Level.getMinBuildHeight()
@@ -55,7 +56,7 @@ public abstract class MixinFallingBlock {
         )
     )
     private int cal3(int original, @Local(ordinal = 0) BlockPos pos, @Local(ordinal = 0) ServerLevel level) {
-        return CInversionManager.shouldBeInverted(level, pos) ? -level.getMaxBuildHeight() : original;
+        return CBlockInversionManager.shouldBeInverted(level, pos) ? -level.getMaxBuildHeight() : original;
     }
 
 }

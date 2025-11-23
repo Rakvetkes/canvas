@@ -1,38 +1,25 @@
 package org.aki.helvetti;
 
 import com.mojang.logging.LogUtils;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
-import net.minecraft.world.level.FoliageColor;
-import net.minecraft.world.level.GrassColor;
-import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
-import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
-import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
-import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
-import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
-import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
+
 import org.aki.helvetti.block.CBlocks;
 import org.aki.helvetti.entity.CEntityAttachments;
 import org.aki.helvetti.item.CItems;
 import org.aki.helvetti.worldgen.CBiomeSources;
 import org.aki.helvetti.worldgen.CChunkGenerators;
-import org.aki.helvetti.worldgen.CLelyetiaBiomeSource;
-import org.aki.helvetti.worldgen.placement.CPlacementModifiers;
+import org.aki.helvetti.worldgen.heightmap.CPlacementModifiers;
+import org.aki.helvetti.worldgen.structure.CStructurePlacementTypes;
 import org.aki.helvetti.worldgen.tree.CTreePlacers;
 import org.slf4j.Logger;
 
@@ -83,16 +70,11 @@ public final class CCanvasMain {
         // Register custom placement modifiers
         CPlacementModifiers.register(modEventBus);
         
+        // Register custom structure placement types
+        CStructurePlacementTypes.register(modEventBus);
+        
         // Register entity attachments
         CEntityAttachments.register(modEventBus);
-
-        // Register ourselves for server and other game events we are interested in.
-        // Note that this is necessary if and only if we want *this* class (ExampleMod) to respond directly to events.
-        // Do not add this line if there are no @SubscribeEvent-annotated functions in this class, like onServerStarting() below.
-        NeoForge.EVENT_BUS.register(this);
-
-        // Register the item to a creative tab
-        modEventBus.addListener(this::addCreative);
 
         // Register our mod's ModConfigSpec so that FML can create and load the config file for us
         modContainer.registerConfig(ModConfig.Type.COMMON, CConfig.SPEC);
@@ -100,21 +82,7 @@ public final class CCanvasMain {
 
     private void commonSetup(FMLCommonSetupEvent event) {
         // Some common setup code
-        LOGGER.info("Canvas of Helvetti initializing.");
-        
-        // Register inverted biomes
-        event.enqueueWork(() -> {
-            CLelyetiaBiomeSource.INVERTED_BIOMES.add(ResourceKey.create(Registries.BIOME, 
-                ResourceLocation.fromNamespaceAndPath(MODID, "inverted_golden_woods")));
-            CLelyetiaBiomeSource.INVERTED_BIOMES.add(ResourceKey.create(Registries.BIOME, 
-                ResourceLocation.fromNamespaceAndPath(MODID, "inverted_sunlit_grove")));
-            CLelyetiaBiomeSource.INVERTED_BIOMES.add(ResourceKey.create(Registries.BIOME, 
-                ResourceLocation.fromNamespaceAndPath(MODID, "inverted_crimson_thicket")));
-            CLelyetiaBiomeSource.INVERTED_BIOMES.add(ResourceKey.create(Registries.BIOME, 
-                ResourceLocation.fromNamespaceAndPath(MODID, "inverted_vermilion_woods")));
-            CLelyetiaBiomeSource.INVERTED_BIOMES.add(ResourceKey.create(Registries.BIOME, 
-                ResourceLocation.fromNamespaceAndPath(MODID, "inverted_basilica")));
-        });
+        LOGGER.info("<Alacy> setting you up");
 
         java.util.List<? extends String> comments = CConfig.ALACY_COMMENT.get();
         if (comments != null && !comments.isEmpty()) {
@@ -123,65 +91,5 @@ public final class CCanvasMain {
         }
     }
 
-    // Add the example block item to the building blocks tab
-    private void addCreative(BuildCreativeModeTabContentsEvent event) {
-        if (event.getTabKey() == CreativeModeTabs.BUILDING_BLOCKS) {
-            // event.accept(EXAMPLE_BLOCK_ITEM);
-        }
-    }
 
-    // You can use SubscribeEvent and let the Event Bus discover methods to call
-    @SubscribeEvent
-    public void onServerStarting(ServerStartingEvent event) {
-        // Do something when the server starts
-        LOGGER.info("Canvas of Helvetti server starting.");
-    }
-
-    // You can use EventBusSubscriber to automatically register all static methods in the class annotated with @SubscribeEvent
-    @EventBusSubscriber(modid = CCanvasMain.MODID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
-    static class ClientModEvents {
-        @SubscribeEvent
-        static void onClientSetup(FMLClientSetupEvent event) {
-            // Some client setup code
-            LOGGER.info("Canvas of Helvetti initializing on client.");
-            LOGGER.info("<Alacy> We're currently surfing as {}", Minecraft.getInstance().getUser().getName());
-        }
-        
-        @SubscribeEvent
-        static void registerBlockColors(RegisterColorHandlersEvent.Block event) {
-            // Register biome-based color for flipped grass block
-            // The block uses tintindex 0 for the grass-colored parts
-            event.register((state, level, pos, tintIndex) -> {
-                // Return grass color based on biome
-                if (level != null && pos != null) {
-                    return BiomeColors.getAverageGrassColor(level, pos);
-                }
-                return GrassColor.getDefaultColor();
-            }, CBlocks.FLIPPED_GRASS_BLOCK.get());
-
-            // Register biome-based color for leaf blocks
-            event.register((state, level, pos, tintIndex) -> {
-                if (level != null && pos != null) {
-                    return BiomeColors.getAverageFoliageColor(level, pos);
-                }
-                return FoliageColor.getDefaultColor();
-            }, CBlocks.LELYETIAN_BIRCH_LEAVES.get(),
-               CBlocks.GLOWING_LELYETIAN_BIRCH_LEAVES.get(),
-               CBlocks.LELYETIAN_MAPLE_LEAVES.get());
-        }
-        
-        @SubscribeEvent
-        static void registerItemColors(RegisterColorHandlersEvent.Item event) {
-            // Register biome-based color for flipped grass block item
-            // Uses the default grass color for items
-            event.register((stack, tintIndex) -> GrassColor.getDefaultColor()
-                , CItems.FLIPPED_GRASS_BLOCK_ITEM.get());
-
-            // Register foliage color for leaf items
-            event.register((stack, tintIndex) -> FoliageColor.getDefaultColor()
-                , CItems.LELYETIAN_BIRCH_LEAVES_ITEM.get(),
-                  CItems.GLOWING_LELYETIAN_BIRCH_LEAVES_ITEM.get(),
-                  CItems.LELYETIAN_MAPLE_LEAVES_ITEM.get());
-        }
-    }
 }

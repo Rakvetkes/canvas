@@ -10,9 +10,10 @@ public final class CCanvasTags {
     /**
      * Tag for entities that cannot be rendered inverted
      */
-    public static final TagKey<EntityType<?>> NON_INVERTIBLE_ENTITIES = 
+    public static final TagKey<EntityType<?>> NOT_RENDERED_INVERSELY = 
         TagKey.create(
             Registries.ENTITY_TYPE,
-            ResourceLocation.fromNamespaceAndPath(CCanvasMain.MODID, "non_invertible")
+            ResourceLocation.fromNamespaceAndPath(CCanvasMain.MODID, "not_rendered_inversely")
         );
+        
 }

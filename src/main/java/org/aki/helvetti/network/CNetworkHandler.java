@@ -13,7 +13,7 @@ import org.aki.helvetti.CCanvasMain;
 public final class CNetworkHandler {
     
     @SubscribeEvent
-    public static void registerPayloads(RegisterPayloadHandlersEvent event) {
+    static void registerPayloads(RegisterPayloadHandlersEvent event) {
         PayloadRegistrar registrar = event.registrar(CCanvasMain.MODID)
             .versioned("1.0");
         

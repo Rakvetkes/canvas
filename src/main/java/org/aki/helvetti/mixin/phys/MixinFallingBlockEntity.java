@@ -5,7 +5,8 @@ import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.FallingBlockEntity;
-import org.aki.helvetti.entity.CInversionManager;
+
+import org.aki.helvetti.feature.CEntityInversionManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
@@ -26,7 +27,7 @@ public abstract class MixinFallingBlockEntity {
     )
     private BlockPos cal1(BlockPos original, @Local(ordinal = 0) BlockPos pos) {
         Entity self = (Entity) (Object) this;
-        return CInversionManager.isLogicallyInverted(self) ? pos.above() : original;
+        return CEntityInversionManager.isLogicallyInverted(self) ? pos.above() : original;
     }
 
 }

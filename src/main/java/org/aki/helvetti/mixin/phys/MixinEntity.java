@@ -5,7 +5,8 @@ import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import org.aki.helvetti.entity.CInversionManager;
+
+import org.aki.helvetti.feature.CEntityInversionManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -41,7 +42,7 @@ public abstract class MixinEntity {
     @ModifyReturnValue(method = "getGravity", at = @At("RETURN"))
     private double modifyGravity(double original) {
         Entity entity = (Entity) (Object) this;
-        return CInversionManager.isLogicallyInverted(entity) ? -original : original;
+        return CEntityInversionManager.isLogicallyInverted(entity) ? -original : original;
     }
     
 
@@ -58,7 +59,7 @@ public abstract class MixinEntity {
     private void modifyVerticalCollisionBelow(MoverType pMoverType, Vec3 pos, CallbackInfo ci) {
         Entity entity = (Entity) (Object) this;
         
-        if (CInversionManager.isLogicallyInverted(entity)) {
+        if (CEntityInversionManager.isLogicallyInverted(entity)) {
             // For inverted entities, reassign verticalCollisionBelow based on inverted logic
             this.verticalCollisionBelow = this.verticalCollision && pos.y > 0.0;
         }
@@ -74,7 +75,7 @@ public abstract class MixinEntity {
     )
     private double modifyCheckFallDamageY(double y) {
         Entity entity = (Entity) (Object) this;
-        return CInversionManager.isLogicallyInverted(entity) ? -y : y;
+        return CEntityInversionManager.isLogicallyInverted(entity) ? -y : y;
     }
 
     // inversion of Y offset for foot position detection
@@ -86,7 +87,7 @@ public abstract class MixinEntity {
     )
     private float modifyGetOnPosYOffset(float yOffset) {
         Entity entity = (Entity) (Object) this;
-        return CInversionManager.isLogicallyInverted(entity) ? -yOffset : yOffset;
+        return CEntityInversionManager.isLogicallyInverted(entity) ? -yOffset : yOffset;
     }
 
     // modify supporting block detection area for inverted entities
@@ -96,7 +97,7 @@ public abstract class MixinEntity {
     )
     private void modifyCheckSupportingBlockAABBArgs(Args args, @Local(ordinal = 0) AABB aabb) {
         Entity entity = (Entity) (Object) this;
-        if (CInversionManager.isLogicallyInverted(entity)) {
+        if (CEntityInversionManager.isLogicallyInverted(entity)) {
             args.set(1, aabb.maxY);
             args.set(4, aabb.maxY + 1.0E-5F);
         }
@@ -110,19 +111,19 @@ public abstract class MixinEntity {
     @ModifyReturnValue(method = "getEyeHeight()F", at = @At("RETURN"))
     private float modifyGetEyeHeight(float original) {
         Entity entity = (Entity) (Object) this;
-        return CInversionManager.isLogicallyInverted(entity) ? entity.getBbHeight() - this.eyeHeight : original;
+        return CEntityInversionManager.isLogicallyInverted(entity) ? entity.getBbHeight() - this.eyeHeight : original;
     }
 
     @ModifyReturnValue(method = "getEyeHeight(Lnet/minecraft/world/entity/Pose;)F", at = @At("RETURN"))
     private float modifyGetEyeHeightPose(float original, Pose pose) {
         Entity entity = (Entity) (Object) this;
-        return CInversionManager.isLogicallyInverted(entity) ? entity.getBbHeight() - original : original;
+        return CEntityInversionManager.isLogicallyInverted(entity) ? entity.getBbHeight() - original : original;
     }
 
     @ModifyReturnValue(method = "getEyeY()D", at = @At("RETURN"))
     private double modifyGetEyeY(double original) {
         Entity entity = (Entity) (Object) this;
-        return CInversionManager.isLogicallyInverted(entity) ? entity.getY() + entity.getBbHeight() - this.eyeHeight : original;
+        return CEntityInversionManager.isLogicallyInverted(entity) ? entity.getY() + entity.getBbHeight() - this.eyeHeight : original;
     }
     // I'm assuming getRopeHoldPosition() is only used in EntityRenderer.renderLeash()
     // Logical layer... which means no shouldBeRenderedInverted() used here... I guess?
@@ -138,7 +139,7 @@ public abstract class MixinEntity {
     )
     private void modifyPositionRiderArgs(Args args) {
         Entity vehicle = (Entity) (Object) this;
-        if (CInversionManager.isLogicallyInverted(vehicle)) {
+        if (CEntityInversionManager.isLogicallyInverted(vehicle)) {
             double deltaY = (double) args.get(2) - vehicle.getY();
             double baseY = vehicle.getY() - deltaY - ((Entity) args.get(0)).getBbHeight();
             args.set(2, baseY + vehicle.getBbHeight());
@@ -148,13 +149,13 @@ public abstract class MixinEntity {
     @ModifyReturnValue(method = "getDismountLocationForPassenger", at = @At("RETURN"))
     private Vec3 modifyDismountLocationForPassenger(Vec3 original, LivingEntity passenger) {
         Entity entity = (Entity) (Object) this;
-        if (CInversionManager.isLogicallyInverted(entity)) {
+        if (CEntityInversionManager.isLogicallyInverted(entity)) {
             double newY = entity.getBoundingBox().minY - passenger.getBbHeight();
             return new Vec3(original.x, newY, original.z);
         }
         return original;
     }
-    // TODO: Check nearby ground positions for real vehicles... look at those overrides. :)
+    // TODO: [ISSUE] Check nearby ground positions for real vehicles... look at those overrides. :)
     // I am tired of these right now. :D
 
 
@@ -173,7 +174,7 @@ public abstract class MixinEntity {
     private void onRefreshDimensions(CallbackInfo ci, @Local(ordinal = 0) EntityDimensions oldDimensions,
                                      @Local(ordinal = 1) EntityDimensions newDimensions) {
         Entity entity = (Entity) (Object) this;
-        if (CInversionManager.isLogicallyInverted(entity)) {
+        if (CEntityInversionManager.isLogicallyInverted(entity)) {
             this.position = this.position.add(0.0, oldDimensions.height() - newDimensions.height(), 0.0);
         }
     }

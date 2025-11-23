@@ -7,7 +7,8 @@ import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import org.aki.helvetti.entity.CInversionManager;
+
+import org.aki.helvetti.feature.CEntityInversionManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArgs;
@@ -24,7 +25,7 @@ public abstract class MixinPlayer {
     )
     private void modifyCanFallAtLeastAABBArgs(Args args, @Local(ordinal = 0) AABB aabb) {
         Player player = (Player) (Object) this;
-        if (CInversionManager.isLogicallyInverted(player)) {
+        if (CEntityInversionManager.isLogicallyInverted(player)) {
             args.set(1, aabb.maxY);
             args.set(4, aabb.maxY + 1.0E-5F);
         }
@@ -37,7 +38,7 @@ public abstract class MixinPlayer {
     )
     private double modifyMaybeBackOffFromEdgeYValue(double original) {
         Player player = (Player) (Object) this;
-        return CInversionManager.isLogicallyInverted(player) ? -original : original;
+        return CEntityInversionManager.isLogicallyInverted(player) ? -original : original;
     }
 
 
@@ -48,7 +49,7 @@ public abstract class MixinPlayer {
     )
     private void modifyCanPlayerFitWithinBlocksAndEntitiesWhenArgs(Args args, @Local(ordinal = 0, argsOnly = true) Pose pose) {
         Player player = (Player) (Object) this;
-        if (CInversionManager.isLogicallyInverted(player)) {
+        if (CEntityInversionManager.isLogicallyInverted(player)) {
             args.set(0, ((Vec3) args.get(0))
                 .add(0.0, player.getBbHeight(), 0.0)
                 .subtract(0.0, player.getDimensions(pose).height(), 0.0));

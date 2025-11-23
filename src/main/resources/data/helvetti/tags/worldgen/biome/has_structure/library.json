@@ -1,0 +1,9 @@
+{
+    "replace": false,
+    "values": [
+        "helvetti:sunlit_grove",
+        "helvetti:vermilion_woods",
+        "helvetti:golden_woods",
+        "helvetti:crimson_thicket"
+    ]
+}

@@ -12,7 +12,7 @@ import java.util.List;
  * 
  * Each parameter is a list of ranges - a value matches if it falls within ANY of the ranges.
  */
-public record CBiomeParameterRange(
+public record CNoiseRange(
     List<Range> temperature,
     List<Range> humidity,
     List<Range> continentalness,
@@ -41,15 +41,15 @@ public record CBiomeParameterRange(
         }
     }
     
-    public static final Codec<CBiomeParameterRange> CODEC = RecordCodecBuilder.create(instance ->
+    public static final Codec<CNoiseRange> CODEC = RecordCodecBuilder.create(instance ->
         instance.group(
-            Range.CODEC.listOf().optionalFieldOf("temperature", List.of(Range.ALL)).forGetter(CBiomeParameterRange::temperature),
-            Range.CODEC.listOf().optionalFieldOf("humidity", List.of(Range.ALL)).forGetter(CBiomeParameterRange::humidity),
-            Range.CODEC.listOf().optionalFieldOf("continentalness", List.of(Range.ALL)).forGetter(CBiomeParameterRange::continentalness),
-            Range.CODEC.listOf().optionalFieldOf("erosion", List.of(Range.ALL)).forGetter(CBiomeParameterRange::erosion),
-            Range.CODEC.listOf().optionalFieldOf("weirdness", List.of(Range.ALL)).forGetter(CBiomeParameterRange::weirdness),
-            Range.CODEC.listOf().optionalFieldOf("depth", List.of(Range.ALL)).forGetter(CBiomeParameterRange::depth)
-        ).apply(instance, CBiomeParameterRange::new)
+            Range.CODEC.listOf().optionalFieldOf("temperature", List.of(Range.ALL)).forGetter(CNoiseRange::temperature),
+            Range.CODEC.listOf().optionalFieldOf("humidity", List.of(Range.ALL)).forGetter(CNoiseRange::humidity),
+            Range.CODEC.listOf().optionalFieldOf("continentalness", List.of(Range.ALL)).forGetter(CNoiseRange::continentalness),
+            Range.CODEC.listOf().optionalFieldOf("erosion", List.of(Range.ALL)).forGetter(CNoiseRange::erosion),
+            Range.CODEC.listOf().optionalFieldOf("weirdness", List.of(Range.ALL)).forGetter(CNoiseRange::weirdness),
+            Range.CODEC.listOf().optionalFieldOf("depth", List.of(Range.ALL)).forGetter(CNoiseRange::depth)
+        ).apply(instance, CNoiseRange::new)
     );
 
     /**

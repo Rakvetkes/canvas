@@ -1,13 +1,9 @@
 package org.aki.helvetti.worldgen.tree;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Holder;
 import net.minecraft.world.level.LevelSimulatedReader;
-import net.minecraft.world.level.WorldGenLevel;
-import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.levelgen.feature.TreeFeature;
 import net.minecraft.world.level.levelgen.feature.configurations.TreeConfiguration;
-import org.aki.helvetti.worldgen.CLelyetiaBiomeSource;
 
 import javax.annotation.Nonnull;
 
@@ -15,22 +11,6 @@ import javax.annotation.Nonnull;
  * Utility class for tree generation in Lelyetia dimension.
  */
 public final class CTreeUtil {
-
-    /**
-     * Checks if the given position is in an inverted biome.
-     * @param level The level to check in
-     * @param pos The position to check
-     * @return true if the biome at the position is inverted, false otherwise
-     */
-    public static boolean isInvertedBiome(@Nonnull LevelSimulatedReader level, @Nonnull BlockPos pos) {
-        if (level instanceof WorldGenLevel worldGenLevel) {
-            Holder<Biome> biomeHolder = worldGenLevel.getBiome(pos);
-            return biomeHolder.unwrapKey()
-                .map(biomeKey -> CLelyetiaBiomeSource.INVERTED_BIOMES.contains(biomeKey))
-                .orElse(false);
-        }
-        return false;
-    }
 
     /**
      * Check if there's enough space below for an inverted tree to grow.

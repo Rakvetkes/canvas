@@ -15,7 +15,7 @@ public final class CConfig {
     
     public static final ModConfigSpec.ConfigValue<List<? extends String>> ALACY_COMMENT = BUILDER
             .comment("What you want Alacy to say on startup. (Does anyone really read these??)")
-            .defineListAllowEmpty("alacyComment", List.of("I don't like your look.", "Nice to seeee youuu"),
+            .defineListAllowEmpty("alacyComment", List.of("i do not like your look", "nice to seeee youuu"),
                     () -> "", obj -> obj instanceof String);
 
 
@@ -42,33 +42,7 @@ public final class CConfig {
                 "Higher values = less network traffic but potential visual delays"
             )
             .defineInRange("syncIntervalTicks", 20, 1, 100);
-    
-
-    // ==================== World Generation Settings ====================
-    
-    static {
-        BUILDER.pop();
-        
-        BUILDER.push("world_generation");
-    }
-
-    public static final ModConfigSpec.DoubleValue EROSION_MULTIPLIER = BUILDER
-            .comment(
-                "Multiplier for erosion values in carving noise calculation",
-                "Controls the influence of erosion on terrain flipping",
-                "Default: 0.1",
-                "Higher values = more erosion influence"
-            )
-            .defineInRange("erosionMultiplier", 0.1, 0.0, 1.0);
-    
-    public static final ModConfigSpec.DoubleValue CARVING_DEPTH_MULTIPLIER = BUILDER
-            .comment(
-                "Multiplier for calculating carving depth from noise values",
-                "Controls how much terrain is carved based on noise",
-                "Default: 2000.0",
-                "Higher values = deeper carving"
-            )
-            .defineInRange("carvingDepthMultiplier", 2000.0, 0.0, 10000.0);
+            
     
     static {
         BUILDER.pop();

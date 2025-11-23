@@ -1,4 +1,4 @@
-package org.aki.helvetti.worldgen.placement;
+package org.aki.helvetti.worldgen.heightmap;
 
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.levelgen.placement.PlacementModifierType;

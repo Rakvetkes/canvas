@@ -5,7 +5,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Pose;
-import org.aki.helvetti.client.CInversionManagerClient;
+import org.aki.helvetti.client.CRendererInversionManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -36,9 +36,9 @@ public abstract class MixinEntityRenderDispatcher {
                                    PoseStack poseStack, MultiBufferSource bufferSource,
                                    int packedLight, CallbackInfo ci) {
         try {
-            if (CInversionManagerClient.isRenderedInversely(entity)) {
+            if (CRendererInversionManager.isRenderedInversely(entity)) {
                 // poseStack.scale(1.0f, -1.0f, 1.0f);
-                CInversionManagerClient.facialSpaghetti(poseStack, yRot);
+                CRendererInversionManager.facialSpaghetti(poseStack, yRot);
                 poseStack.translate(0.0, -entity.getBbHeight(), 0.0);
 
                 // crouching entities are offset incorrectly when inverted due to some unknown reason

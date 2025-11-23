@@ -5,6 +5,7 @@ bin
 .metadata
 .classpath
 .project
+.eclipse
 
 # idea
 out
@@ -25,5 +26,7 @@ run-data
 docs
 todo.md
 .vscode
+.mvn
+.github
 
 repo

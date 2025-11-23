@@ -7,7 +7,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.MovementInputUpdateEvent;
 import org.aki.helvetti.CCanvasMain;
-import org.aki.helvetti.entity.CInversionManager;
+import org.aki.helvetti.feature.CEntityInversionManager;
 
 /**
  * Handles keyboard input inversion for players in inverted state.
@@ -26,14 +26,14 @@ public final class CInvertedInputHandler {
      * This event fires after keyboard input is processed but before it's applied to player movement.
      */
     @SubscribeEvent
-    public static void onMovementInput(MovementInputUpdateEvent event) {
+    static void onMovementInput(MovementInputUpdateEvent event) {
         Player playerEntity = event.getEntity();
         if (!(playerEntity instanceof LocalPlayer player)) {
             return;
         }
 
         // Check if player should be inverted
-        if (!CInversionManager.isLogicallyInverted(player)) {
+        if (!CEntityInversionManager.isLogicallyInverted(player)) {
             return;
         }
 

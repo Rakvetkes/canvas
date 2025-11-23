@@ -1,15 +1,12 @@
-package org.aki.helvetti.entity;
+package org.aki.helvetti.feature;
 
-import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.biome.Biome;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.aki.helvetti.CConfig;
+import org.aki.helvetti.entity.CEntityAttachments;
+import org.aki.helvetti.entity.CEntityInversionData;
 import org.aki.helvetti.network.CEntityInversionSyncPacket;
-import org.aki.helvetti.worldgen.CLelyetiaBiomeSource;
 
 import java.util.Optional;
 
@@ -17,24 +14,16 @@ import java.util.Optional;
  * Manager class for entity inversion state
  * Handles the configurable timing logic and biome condition checking
  */
-public final class CInversionManager {
+public final class CEntityInversionManager {
 
     /* BOTH SERVER AND CLIENT-SIDE */
-
-    /** Check if the entity should be inverted based on the biome at the given position */
-    public static boolean shouldBeInverted(Level level, BlockPos blockPos) {
-        // Just biome check
-        Optional<ResourceKey<Biome>> biomeKey = level.getBiome(blockPos).unwrapKey();
-        return biomeKey.map(CLelyetiaBiomeSource.INVERTED_BIOMES::contains)
-            .orElse(false);
-    }
 
     /** Check if the entity should be inverted based on its current position */
     public static boolean shouldBeInverted(Entity entity) {
         if (entity == null || entity.level() == null) {
             return false;
         }
-        return shouldBeInverted(entity.level(), entity.blockPosition());
+        return CBlockInversionManager.shouldBeInverted(entity.level(), entity.blockPosition());
     }
 
     /** Logically inverted state check */

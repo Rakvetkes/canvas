@@ -2,7 +2,8 @@ package org.aki.helvetti.mixin.phys;
 
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
-import org.aki.helvetti.entity.CInversionManager;
+
+import org.aki.helvetti.feature.CEntityInversionManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
@@ -20,7 +21,7 @@ public abstract class MixinServerGamePacketListenerImpl {
     )
     private boolean modifyInAirFlag(boolean flag4, @Local(ordinal = 7) double d7) {
         ServerGamePacketListenerImpl listener = (ServerGamePacketListenerImpl) (Object) this;
-        return CInversionManager.isLogicallyInverted(listener.getPlayer()) ? d7 < 0.0 : flag4;
+        return CEntityInversionManager.isLogicallyInverted(listener.getPlayer()) ? d7 < 0.0 : flag4;
     }
 
 }

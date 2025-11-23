@@ -1,19 +1,19 @@
 {
-  "replace": false,
-  "values": [
-    "helvetti:sunlit_grove",
-    "helvetti:golden_woods",
-    "helvetti:vermilion_woods",
-    "helvetti:crimson_thicket",
-    "helvetti:inverted_sunlit_grove",
-    "helvetti:inverted_golden_woods",
-    "helvetti:inverted_vermilion_woods",
-    "helvetti:inverted_crimson_thicket",
-    "helvetti:lelyetian_stream",
-    "helvetti:golden_barrens",
+    "replace": false,
+    "values": [
+        "helvetti:sunlit_grove",
+        "helvetti:golden_woods",
+        "helvetti:vermilion_woods",
+        "helvetti:crimson_thicket",
+        "helvetti:inverted_sunlit_grove",
+        "helvetti:inverted_golden_woods",
+        "helvetti:inverted_vermilion_woods",
+        "helvetti:inverted_crimson_thicket",
+        "helvetti:lelyetian_stream",
+        "helvetti:golden_barrens",
 
-    "helvetti:inverted_basilica",
-    "helvetti:fortress_mountains",
-    "helvetti:ascension_peak"
-  ]
+        "helvetti:inverted_basilica",
+        "helvetti:fortress_mountains",
+        "helvetti:ascension_peak"
+    ]
 }
