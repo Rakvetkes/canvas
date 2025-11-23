@@ -48,6 +48,9 @@ public class CLelyetiaChunkGenerator extends NoiseBasedChunkGenerator {
 
     public static final int MIRROR_LEVEL = 200;
 
+    private static final double TREND_WEIGHT = 0.7;
+    private static final double NATURAL_WEIGHT = 0.5;
+
     /**
      * Flipping list - maps original block states to their flipped versions.
      * Add custom block state mappings here for terrain inversion.
@@ -106,9 +109,10 @@ public class CLelyetiaChunkGenerator extends NoiseBasedChunkGenerator {
                 int worldZ = chunkZ + localZ;
 
                 if (CBiomeInversionManager.isBiomeInverted(region.getBiome(new BlockPos(worldX, 0, worldZ)))) {
-                    DensityFunction.SinglePointContext context = new DensityFunction.SinglePointContext(worldX, 0, worldZ);
-                    double continentalness = noiseRouter.continents().compute(context);
-                    double erosion = noiseRouter.erosion().compute(context);
+                    double continentalness = noiseRouter.continents().compute(new DensityFunction
+                        .SinglePointContext(worldX, 0, worldZ));
+                    double erosion = noiseRouter.erosion().compute(new DensityFunction
+                        .SinglePointContext(worldX << 2, 0, worldZ << 2));
                     double noiseCarving = getNoiseCarving(continentalness, erosion);
 
                     Pair<ResourceLocation, Double> nearestLandmark = CLandmarkManager
@@ -116,7 +120,7 @@ public class CLelyetiaChunkGenerator extends NoiseBasedChunkGenerator {
                     double landmarkCarving = nearestLandmark == null ? 0.0 : CLandmarkTypes
                         .get(nearestLandmark.getFirst()).getLandmarkCarving(nearestLandmark.getSecond());
                     
-                    double finalCarving = noiseCarving * 0.5 + landmarkCarving * 0.5;
+                    double finalCarving = noiseCarving * NATURAL_WEIGHT + landmarkCarving * (1.0 - NATURAL_WEIGHT);
                     int groundLevel = findGroundLevel(chunk, localX, localZ);
 
                     if (groundLevel != Integer.MIN_VALUE) {
@@ -143,7 +147,7 @@ public class CLelyetiaChunkGenerator extends NoiseBasedChunkGenerator {
         double lowerContinents = Math.floor(continentalness * 10.0) / 10.0;
         double upperContinents = Math.ceil(continentalness * 10.0) / 10.0;
         double trend = Math.min(continentalness - lowerContinents, upperContinents - continentalness) * 20.0;
-        return trend * 0.6 + Math.abs(erosion) * 0.3 + 0.1;
+        return trend * TREND_WEIGHT + Math.abs(erosion) * (1.0 - TREND_WEIGHT);
     }
     
     /**

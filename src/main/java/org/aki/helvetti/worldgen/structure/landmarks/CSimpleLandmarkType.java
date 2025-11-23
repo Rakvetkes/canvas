@@ -18,6 +18,7 @@ public record CSimpleLandmarkType(int influentialRange, int innerThreshold, int 
 
     @Override
     public double getLandmarkCarving(double value) {
-        return value < innerThreshold ? ((double) innerThreshold - value) / (double) innerThreshold : 0.0;
+        double ratio = ((double) innerThreshold - value) / (double) innerThreshold;
+        return value < innerThreshold ? ratio * ratio : 0.0;
     }
 }
