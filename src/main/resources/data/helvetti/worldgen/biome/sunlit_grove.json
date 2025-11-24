@@ -32,7 +32,10 @@
     [],
     [],
     [],
-    [],
+    [
+      "helvetti:lelyetian_birch",
+      "helvetti:lelyetian_maple"
+    ],
     []
   ]
 }

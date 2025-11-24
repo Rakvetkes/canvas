@@ -32,7 +32,9 @@
     [],
     [],
     [],
-    [],
+    [
+      "helvetti:lelyetian_maple"
+    ],
     []
   ]
 }

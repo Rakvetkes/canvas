@@ -18,9 +18,10 @@ import org.aki.helvetti.entity.CEntityAttachments;
 import org.aki.helvetti.item.CItems;
 import org.aki.helvetti.worldgen.CBiomeSources;
 import org.aki.helvetti.worldgen.CChunkGenerators;
-import org.aki.helvetti.worldgen.heightmap.CPlacementModifiers;
-import org.aki.helvetti.worldgen.structure.CStructurePlacementTypes;
-import org.aki.helvetti.worldgen.tree.CTreePlacers;
+import org.aki.helvetti.worldgen.feature.placement.CPlacementModifiers;
+import org.aki.helvetti.worldgen.feature.tree.CTreePlacers;
+import org.aki.helvetti.worldgen.structure.placement.CStructurePlacementTypes;
+import org.aki.helvetti.worldgen.structure.placement_2.CStructureTypes;
 import org.slf4j.Logger;
 
 // The value here should match an entry in the META-INF/neoforge.mods.toml file
@@ -33,7 +34,7 @@ public final class CCanvasMain {
     // Create a Deferred Register to hold CreativeModeTabs which will all be registered under the "helvetti" namespace
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
 
-    public static final DeferredHolder<CreativeModeTab, CreativeModeTab> MAIN_TAB = CREATIVE_MODE_TABS.register("helvetti", () -> CreativeModeTab.builder()
+    public static final DeferredHolder<CreativeModeTab, CreativeModeTab> MAIN_TAB = CREATIVE_MODE_TABS.register("main_tab", () -> CreativeModeTab.builder()
             .title(Component.translatable("itemGroup.helvetti")) //The language key for the title of your CreativeModeTab
             .withTabsBefore(CreativeModeTabs.COMBAT)
             .icon(() -> CItems.FLIPPED_GRASS_BLOCK_ITEM.get().getDefaultInstance())
@@ -72,6 +73,9 @@ public final class CCanvasMain {
         
         // Register custom structure placement types
         CStructurePlacementTypes.register(modEventBus);
+
+        // Register custom structure types
+        CStructureTypes.register(modEventBus);
         
         // Register entity attachments
         CEntityAttachments.register(modEventBus);

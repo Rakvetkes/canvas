@@ -10,9 +10,8 @@ import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
 
 import org.aki.helvetti.worldgen.CLelyetiaBiomeSource;
-
+import org.aki.helvetti.worldgen.structure.placement.CLandmarkManager;
 import org.aki.helvetti.feature.CBiomeInversionManager;
-import org.aki.helvetti.worldgen.structure.CLandmarkManager;
 
 @EventBusSubscriber(modid = CCanvasMain.MODID, bus = EventBusSubscriber.Bus.GAME)
 public final class CServerEventHandler {

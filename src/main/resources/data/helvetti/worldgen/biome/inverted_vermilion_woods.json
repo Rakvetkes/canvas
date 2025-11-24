@@ -33,7 +33,9 @@
     [],
     [],
     [],
-    [],
+    [
+      "helvetti:inverted_lelyetian_maple"
+    ],
     []
   ]
 }

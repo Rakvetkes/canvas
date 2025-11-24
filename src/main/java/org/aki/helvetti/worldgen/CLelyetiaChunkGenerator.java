@@ -20,9 +20,9 @@ import net.minecraft.world.level.StructureManager;
 import net.minecraft.resources.ResourceLocation;
 
 import org.aki.helvetti.block.CBlocks;
-import org.aki.helvetti.feature.CBiomeInversionManager;
-import org.aki.helvetti.worldgen.structure.CLandmarkManager;
-import org.aki.helvetti.worldgen.structure.landmarks.CLandmarkTypes;
+import org.aki.helvetti.feature.CBlockInversionManager;
+import org.aki.helvetti.worldgen.structure.placement.CLandmarkManager;
+import org.aki.helvetti.worldgen.structure.placement.landmarks.CLandmarkTypes;
 
 import javax.annotation.Nonnull;
 import java.util.HashMap;
@@ -45,8 +45,6 @@ public class CLelyetiaChunkGenerator extends NoiseBasedChunkGenerator {
             NoiseGeneratorSettings.CODEC.fieldOf("settings").forGetter(NoiseBasedChunkGenerator::generatorSettings)
         ).apply(instance, CLelyetiaChunkGenerator::new)
     );
-
-    public static final int MIRROR_LEVEL = 200;
 
     private static final double TREND_WEIGHT = 0.7;
     private static final double NATURAL_WEIGHT = 0.5;
@@ -108,17 +106,15 @@ public class CLelyetiaChunkGenerator extends NoiseBasedChunkGenerator {
                 int worldX = chunkX + localX;
                 int worldZ = chunkZ + localZ;
 
-                if (CBiomeInversionManager.isBiomeInverted(region.getBiome(new BlockPos(worldX, 0, worldZ)))) {
+                if (CBlockInversionManager.shouldBeInvertedWG(region, new BlockPos(worldX, 0, worldZ))) {
                     double continentalness = noiseRouter.continents().compute(new DensityFunction
                         .SinglePointContext(worldX, 0, worldZ));
                     double erosion = noiseRouter.erosion().compute(new DensityFunction
                         .SinglePointContext(worldX << 2, 0, worldZ << 2));
                     double noiseCarving = getNoiseCarving(continentalness, erosion);
 
-                    Pair<ResourceLocation, Double> nearestLandmark = CLandmarkManager
-                        .getNearestInfluentialLandmark(worldX, worldZ, randomState.sampler());
-                    double landmarkCarving = nearestLandmark == null ? 0.0 : CLandmarkTypes
-                        .get(nearestLandmark.getFirst()).getLandmarkCarving(nearestLandmark.getSecond());
+                    Pair<ResourceLocation, Double> nearestLandmark = CLandmarkManager.getNearestInfluentialLandmark(worldX, worldZ, randomState.sampler());
+                    double landmarkCarving = nearestLandmark == null ? 0.0 : CLandmarkTypes.get(nearestLandmark.getFirst()).getLandmarkCarving(nearestLandmark.getSecond());
                     
                     double finalCarving = noiseCarving * NATURAL_WEIGHT + landmarkCarving * (1.0 - NATURAL_WEIGHT);
                     int groundLevel = findGroundLevel(chunk, localX, localZ);
@@ -195,7 +191,7 @@ public class CLelyetiaChunkGenerator extends NoiseBasedChunkGenerator {
             mutablePos.set(x, y, z);
             BlockState state = chunk.getBlockState(mutablePos);
             if (!state.isAir()) {
-                int flippedY = MIRROR_LEVEL - y;
+                int flippedY = CBlockInversionManager.MIRROR_LEVEL - y;
                 // Only flip if target position is within world bounds
                 if (flippedY >= minBuildHeight && flippedY <= maxBuildHeight) {
                     // Check if this block has a flipped version
