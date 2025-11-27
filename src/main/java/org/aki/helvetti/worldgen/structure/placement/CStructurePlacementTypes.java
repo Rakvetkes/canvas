@@ -17,8 +17,8 @@ public final class CStructurePlacementTypes {
     /**
      * Landmark structure placement type - supports noise-based filtering
      */
-    public static final DeferredHolder<StructurePlacementType<?>, StructurePlacementType<CNoiseFilteredPlacement>> NOISE_FILTERED = 
-        STRUCTURE_PLACEMENT_TYPES.register("noise_filtered", () -> () -> CNoiseFilteredPlacement.CODEC);
+    public static final DeferredHolder<StructurePlacementType<?>, StructurePlacementType<CBasicLandmarkPlacement>> BASIC = 
+        STRUCTURE_PLACEMENT_TYPES.register("basic", () -> () -> CBasicLandmarkPlacement.CODEC);
 
     /**
      * Relative structure placement type - places structure relative to another structure's placement

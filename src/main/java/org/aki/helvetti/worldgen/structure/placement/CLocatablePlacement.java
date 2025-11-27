@@ -2,7 +2,6 @@ package org.aki.helvetti.worldgen.structure.placement;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.ChunkPos;
-import net.minecraft.world.level.biome.Climate;
 
 import java.util.function.Consumer;
 
@@ -24,10 +23,9 @@ public interface CLocatablePlacement {
      * @param seed The world seed.
      * @param x The chunk X coordinate.
      * @param z The chunk Z coordinate.
-     * @param sampler The climate sampler, used for noise-based conditions.
      * @return true if the structure should be placed in this chunk, false otherwise.
      */
-    boolean isPlacementChunk(long seed, int x, int z, Climate.Sampler sampler);
+    boolean isPlacementChunk(long seed, int x, int z);
 
     /**
      * Performs an action for each structure instance within a specified radius around a center chunk.
@@ -35,9 +33,7 @@ public interface CLocatablePlacement {
      * @param seed The world seed.
      * @param centre The center chunk position.
      * @param radiusChunk The search radius in chunks.
-     * @param sampler The climate sampler, used for noise-based conditions.
      * @param action The action to perform for each found ChunkPos.
      */
-    void forEachInRadius(long seed, ChunkPos centre, int radiusChunk,
-        Climate.Sampler sampler, Consumer<ChunkPos> action);
+    void forEachInRadius(long seed, ChunkPos centre, int radiusChunk, Consumer<ChunkPos> action);
 }

@@ -8,7 +8,6 @@ import net.minecraft.world.level.chunk.ChunkGeneratorStructureState;
 import net.minecraft.world.level.levelgen.structure.placement.StructurePlacement;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.ChunkPos;
-import net.minecraft.world.level.biome.Climate;
 import net.minecraft.world.level.levelgen.structure.placement.StructurePlacementType;
 
 import javax.annotation.Nonnull;
@@ -79,11 +78,6 @@ public class CRelativePlacement extends StructurePlacement implements CLocatable
         return this.landmarkType.orElse(null);
     }
 
-    @Override
-    protected boolean isPlacementChunk(@Nonnull ChunkGeneratorStructureState state, int x, int z) {
-        return this.isPlacementChunk(state.getLevelSeed(), x, z, state.randomState().sampler());
-    }
-
     /**
      * Checks if a structure should be placed at the given chunk coordinates.
      * This is done by checking if there is a valid anchor structure at a position that would result
@@ -92,17 +86,16 @@ public class CRelativePlacement extends StructurePlacement implements CLocatable
      * @param seed The world seed.
      * @param x The chunk X coordinate.
      * @param z The chunk Z coordinate.
-     * @param sampler The climate sampler.
      * @return true if this chunk is a valid placement location.
      */
     @Override
-    public boolean isPlacementChunk(long seed, int x, int z, Climate.Sampler sampler) {
+    public boolean isPlacementChunk(long seed, int x, int z) {
         if (anchor instanceof CLocatablePlacement landmarkAnchor) {
             List<Vec3i> offsets = this.formation.getChunkOffsets(seed);
             for (Vec3i offset : offsets) {
                 int targetX = x - offset.getX();
                 int targetZ = z - offset.getZ();
-                if (landmarkAnchor.isPlacementChunk(seed, targetX, targetZ, sampler)) {
+                if (landmarkAnchor.isPlacementChunk(seed, targetX, targetZ)) {
                     return true;
                 }
             }
@@ -111,13 +104,13 @@ public class CRelativePlacement extends StructurePlacement implements CLocatable
     }
 
     @Override
-    public void forEachInRadius(long seed, ChunkPos centre, int radiusChunk, Climate.Sampler sampler, Consumer<ChunkPos> action) {
+    public void forEachInRadius(long seed, ChunkPos centre, int radiusChunk, Consumer<ChunkPos> action) {
         if (anchor instanceof CLocatablePlacement landmarkAnchor) {
             int maxFormationDist = formation.getMaxChunkDist();
             List<Vec3i> offsets = formation.getChunkOffsets(seed);
             // Expand search radius to find anchors that might place a relative structure within the requested radius
             int searchRadius = radiusChunk + maxFormationDist;
-            landmarkAnchor.forEachInRadius(seed, centre, searchRadius, sampler, (anchorPos) -> {
+            landmarkAnchor.forEachInRadius(seed, centre, searchRadius, (anchorPos) -> {
                 for (Vec3i offset : offsets) {
                     int rx = anchorPos.x + offset.getX();
                     int rz = anchorPos.z + offset.getZ();
@@ -130,6 +123,11 @@ public class CRelativePlacement extends StructurePlacement implements CLocatable
                 }
             });
         }
+    }
+
+    @Override
+    protected boolean isPlacementChunk(@Nonnull ChunkGeneratorStructureState state, int x, int z) {
+        return this.isPlacementChunk(state.getLevelSeed(), x, z);
     }
 
     @Override

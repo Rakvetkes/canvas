@@ -1,4 +1,4 @@
-package org.aki.helvetti.worldgen;
+package org.aki.helvetti.worldgen.dimension;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
@@ -12,7 +12,8 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 
 import org.aki.helvetti.feature.CBiomeInversionManager;
-import org.aki.helvetti.worldgen.structure.placement.CLandmarkManager;
+import org.aki.helvetti.worldgen.CLandmarkIndex;
+import org.aki.helvetti.worldgen.CNoiseRange;
 import org.aki.helvetti.worldgen.structure.placement.landmarks.CLandmarkTypes;
 
 import javax.annotation.Nonnull;
@@ -98,8 +99,7 @@ public class CLelyetiaBiomeSource extends BiomeSource {
         if (biomeHolder == null) {
             biomeHolder = this.defaultBiome != null ? this.defaultBiome : this.biomeEntries.get(0).biome();
         } else {
-            Pair<ResourceLocation, Double> landmarkInfo = CLandmarkManager
-                .getNearestInfluentialLandmark((x << 2) + 2, (z << 2) + 2, sampler);
+            Pair<ResourceLocation, Double> landmarkInfo = CLandmarkIndex.getNearestInfluentialLandmark((x << 2) + 2, (z << 2) + 2);
             int inversionLock = landmarkInfo == null ? 0 : CLandmarkTypes.get(landmarkInfo.getFirst()).getInversionLock(landmarkInfo.getSecond());
             if (inversionLock == -1) {
                 biomeHolder = toInvertedBiome(biomeHolder);

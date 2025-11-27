@@ -15,6 +15,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 
 import org.aki.helvetti.block.CBlocks;
 import org.aki.helvetti.entity.CEntityAttachments;
+import org.aki.helvetti.feature.CBlockInversionManager;
 import org.aki.helvetti.item.CItems;
 import org.aki.helvetti.worldgen.CBiomeSources;
 import org.aki.helvetti.worldgen.CChunkGenerators;
@@ -54,10 +55,15 @@ public final class CCanvasMain {
 
         // Register the Deferred Register to the mod event bus so blocks get registered
         CBlocks.BLOCKS.register(modEventBus);
+
         // Register the Deferred Register to the mod event bus so items get registered
         CItems.ITEMS.register(modEventBus);
+
         // Register the Deferred Register to the mod event bus so tabs get registered
         CREATIVE_MODE_TABS.register(modEventBus);
+
+        // Initialize block inversion flipping list
+        modEventBus.addListener(CBlockInversionManager::registerFlippingList);
         
         // Register custom biome sources
         CBiomeSources.register(modEventBus);

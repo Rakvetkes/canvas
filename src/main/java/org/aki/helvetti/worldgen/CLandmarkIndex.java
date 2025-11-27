@@ -1,15 +1,14 @@
-package org.aki.helvetti.worldgen.structure.placement;
+package org.aki.helvetti.worldgen;
 
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.levelgen.structure.StructureSet;
-import net.minecraft.world.level.biome.Climate;
 import net.minecraft.world.level.ChunkPos;
 import com.mojang.datafixers.util.Pair;
 import org.apache.commons.lang3.tuple.MutablePair;
-import org.aki.helvetti.CCanvasMain;
+import org.aki.helvetti.worldgen.structure.placement.CLocatablePlacement;
 import org.aki.helvetti.worldgen.structure.placement.landmarks.CLandmarkTypes;
 
 import javax.annotation.Nonnull;
@@ -23,7 +22,7 @@ import java.util.List;
  * This allows for efficient querying of landmark structures in the world,
  * which can be used for various gameplay or generation features.
  */
-public final class CLandmarkManager {
+public final class CLandmarkIndex {
     private static final List<CLocatablePlacement> landmarkPlacements = new ArrayList<>();
     private static long levelSeed;
     private static boolean cacheInitialized = false;
@@ -43,7 +42,7 @@ public final class CLandmarkManager {
             StructureSet structureSet = entry.getValue();
             if (structureSet.placement() instanceof CLocatablePlacement landmarkPlacement) {
                 if (landmarkPlacement.landmarkType() != null) {
-                    CCanvasMain.LOGGER.info("Registered landmark structure: " + entry.getKey());
+                    // CCanvasMain.LOGGER.info("Registered landmark structure: " + entry.getKey());
                     landmarkPlacements.add(landmarkPlacement);
                 }
             }
@@ -55,14 +54,13 @@ public final class CLandmarkManager {
      * Checks if a specific chunk contains a landmark structure.
      *
      * @param chunkPos The chunk position to check.
-     * @param sampler The climate sampler.
      * @return The ResourceLocation of the landmark type if found, null otherwise.
      */
     @Nullable
-    public static ResourceLocation getLandmark(ChunkPos chunkPos, Climate.Sampler sampler) {
+    public static ResourceLocation getLandmark(ChunkPos chunkPos) {
         if (!cacheInitialized) throw new IllegalStateException("Landmark cache not initialized.");
         for (CLocatablePlacement placement : landmarkPlacements) {
-            if (placement.isPlacementChunk(levelSeed, chunkPos.x, chunkPos.z, sampler)) {
+            if (placement.isPlacementChunk(levelSeed, chunkPos.x, chunkPos.z)) {
                 return placement.landmarkType();
             }
         }
@@ -70,7 +68,7 @@ public final class CLandmarkManager {
     }
 
     @Nullable
-    public static Pair<ResourceLocation, Double> getNearestInfluentialLandmark(int x, int z, Climate.Sampler sampler) {
+    public static Pair<ResourceLocation, Double> getNearestInfluentialLandmark(int x, int z) {
         if (!cacheInitialized) throw new IllegalStateException("Landmark cache not initialized.");
         MutablePair<ResourceLocation, Double> result = new MutablePair<>(null, Double.MAX_VALUE);
 
@@ -79,7 +77,7 @@ public final class CLandmarkManager {
             if (influentialRange <= 0) continue;
 
             placement.forEachInRadius(levelSeed, new ChunkPos(x >> 4, z >> 4),
-                (influentialRange + 15) >> 4, sampler, (target) -> {
+                (influentialRange + 15) >> 4, (target) -> {
                 long dx = target.getMiddleBlockX() - x;
                 long dz = target.getMiddleBlockZ() - z;
                 double dist = Math.sqrt(dx * dx + dz * dz);

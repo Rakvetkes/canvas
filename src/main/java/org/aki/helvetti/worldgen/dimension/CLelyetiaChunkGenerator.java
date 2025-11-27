@@ -1,4 +1,4 @@
-package org.aki.helvetti.worldgen;
+package org.aki.helvetti.worldgen.dimension;
 
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.MapCodec;
@@ -19,9 +19,8 @@ import net.minecraft.world.level.levelgen.RandomState;
 import net.minecraft.world.level.StructureManager;
 import net.minecraft.resources.ResourceLocation;
 
-import org.aki.helvetti.block.CBlocks;
 import org.aki.helvetti.feature.CBlockInversionManager;
-import org.aki.helvetti.worldgen.structure.placement.CLandmarkManager;
+import org.aki.helvetti.worldgen.CLandmarkIndex;
 import org.aki.helvetti.worldgen.structure.placement.landmarks.CLandmarkTypes;
 
 import javax.annotation.Nonnull;
@@ -48,16 +47,6 @@ public class CLelyetiaChunkGenerator extends NoiseBasedChunkGenerator {
 
     private static final double TREND_WEIGHT = 0.7;
     private static final double NATURAL_WEIGHT = 0.5;
-
-    /**
-     * Flipping list - maps original block states to their flipped versions.
-     * Add custom block state mappings here for terrain inversion.
-     */
-    private static final Map<BlockState, BlockState> FLIPPING_LIST = new HashMap<>();
-    
-    static {
-        FLIPPING_LIST.put(Blocks.GRASS_BLOCK.defaultBlockState(), CBlocks.FLIPPED_GRASS_BLOCK.get().defaultBlockState());
-    }
 
     /**
      * Constructor for CLelyetiaChunkGenerator.
@@ -113,7 +102,7 @@ public class CLelyetiaChunkGenerator extends NoiseBasedChunkGenerator {
                         .SinglePointContext(worldX << 2, 0, worldZ << 2));
                     double noiseCarving = getNoiseCarving(continentalness, erosion);
 
-                    Pair<ResourceLocation, Double> nearestLandmark = CLandmarkManager.getNearestInfluentialLandmark(worldX, worldZ, randomState.sampler());
+                    Pair<ResourceLocation, Double> nearestLandmark = CLandmarkIndex.getNearestInfluentialLandmark(worldX, worldZ);
                     double landmarkCarving = nearestLandmark == null ? 0.0 : CLandmarkTypes.get(nearestLandmark.getFirst()).getLandmarkCarving(nearestLandmark.getSecond());
                     
                     double finalCarving = noiseCarving * NATURAL_WEIGHT + landmarkCarving * (1.0 - NATURAL_WEIGHT);
@@ -195,7 +184,7 @@ public class CLelyetiaChunkGenerator extends NoiseBasedChunkGenerator {
                 // Only flip if target position is within world bounds
                 if (flippedY >= minBuildHeight && flippedY <= maxBuildHeight) {
                     // Check if this block has a flipped version
-                    BlockState flippedState = getFlippedBlockState(state);
+                    BlockState flippedState = CBlockInversionManager.getFlippedBlockState(state);
                     blocksToFlip.put(flippedY, flippedState);
                 }
             }
@@ -214,22 +203,5 @@ public class CLelyetiaChunkGenerator extends NoiseBasedChunkGenerator {
             chunk.setBlockState(mutablePos, entry.getValue(), false);
         }
     }
-    
-    /**
-     * Gets the flipped version of a block state based on the flipping list.
-     * If the block state is not in the flipping list, returns the original state.
-     * 
-     * @param original The original block state
-     * @return The flipped block state, or original if no mapping exists
-     */
-    private BlockState getFlippedBlockState(BlockState original) {
-        BlockState flippedState = FLIPPING_LIST.get(original);
-        
-        if (flippedState != null) {
-            return flippedState;
-        }
-        
-        // No flipping mapping found, return original
-        return original;
-    }
+
 }

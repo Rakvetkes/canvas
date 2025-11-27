@@ -75,11 +75,11 @@ public final class CBiomeInversionManager {
                                 ResourceKey<Biome> invertedKey = ResourceKey.create(Registries.BIOME, location);
                                 ResourceKey<Biome> normalKey = ResourceKey.create(Registries.BIOME, normalLocation);
                                 INVERTED_TO_NORMAL.put(invertedKey, normalKey);
-                                CCanvasMain.LOGGER.info("Registered inversion: {} -> {}", normalKey, invertedKey);
+                                // CCanvasMain.LOGGER.info("Registered inversion: {} -> {}", normalKey, invertedKey);
                             } else {
                                 ResourceKey<Biome> invertedKey = ResourceKey.create(Registries.BIOME, location);
                                 INDEPENDENT_INVERTED_BIOMES.add(invertedKey);
-                                CCanvasMain.LOGGER.info("Registered inverted biome: {}", invertedKey);
+                                // CCanvasMain.LOGGER.info("Registered inverted biome: {}", invertedKey);
                             }
                         } catch (Exception e) {
                             CCanvasMain.LOGGER.error("Failed to parse inverted biome config for {}", location, e);

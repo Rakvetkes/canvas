@@ -6,7 +6,7 @@
         }
     ],
     "placement": {
-        "type": "helvetti:noise_filtered",
+        "type": "helvetti:basic",
         "salt": 165745296,
         "spacing": 34,
         "separation": 8,
