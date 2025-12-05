@@ -98,9 +98,7 @@ public abstract class MixinEntityRenderer<T extends Entity> {
     private void afterNameTagRotate(Entity entity, Component displayName, 
                                     PoseStack poseStack, MultiBufferSource buffer, 
                                     int packedLight, float partialTick, CallbackInfo ci) {
-        if (CRendererInversionManager.isViewInverted()) {
-            poseStack.mulPose(Axis.ZP.rotationDegrees(180.0f));
-        }
+        poseStack.mulPose(Axis.ZP.rotationDegrees(-CRendererInversionManager.getViewRotation()));
     }
 
 }

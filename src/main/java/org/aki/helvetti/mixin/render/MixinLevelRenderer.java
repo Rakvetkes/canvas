@@ -45,11 +45,13 @@ public abstract class MixinLevelRenderer {
         Matrix4f frustumMatrix,
         Matrix4f projectionMatrix,
         CallbackInfo ci
-    ) {        
-        // Check if player exists and is inverted
-        if (CRendererInversionManager.isViewInverted()) {
-            // Create rotation matrix for 180 degrees around Z-axis
-            Matrix4f rotation = new Matrix4f().rotateZ((float) Math.PI);
+    ) {
+        // float f = deltaTracker.getGameTimeDeltaPartialTick(false);
+        float f = deltaTracker.getGameTimeDeltaTicks();
+        CRendererInversionManager.updateViewRotation(f);
+        float rotationZ = CRendererInversionManager.getViewRotation();
+        if (rotationZ != 0.0f) {
+            Matrix4f rotation = new Matrix4f().rotateZ((float) Math.toRadians(rotationZ));
             
             // Left-multiply: rotation × frustumMatrix (rotates in world space)
             // This transforms the entire world coordinate system

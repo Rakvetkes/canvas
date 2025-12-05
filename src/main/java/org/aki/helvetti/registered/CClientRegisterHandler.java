@@ -13,7 +13,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import org.aki.helvetti.CCanvasMain;
 
 @EventBusSubscriber(modid = CCanvasMain.MODID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
-public final class CClientEventHandler {
+public final class CClientRegisterHandler {
     // should i put this in a GAME bus handler¿
     @SubscribeEvent
     static void onClientSetup(FMLClientSetupEvent event) {

@@ -5,6 +5,7 @@ import net.minecraft.world.entity.player.Player;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.MovementInputUpdateEvent;
 import org.aki.helvetti.CCanvasMain;
 import org.aki.helvetti.inversion.entity.CEntityInversionManager;
@@ -19,7 +20,7 @@ import org.aki.helvetti.inversion.entity.CEntityInversionManager;
  * Mouse input (up/down and left/right) is handled by MixinMouseHandler.
  */
 @EventBusSubscriber(modid = CCanvasMain.MODID, bus = EventBusSubscriber.Bus.GAME, value = Dist.CLIENT)
-public final class CInvertedInputHandler {
+public final class CClientInversionHandler {
 
     /**
      * Inverts movement input (WASD and Space/Shift) when player is in inverted state.
@@ -48,4 +49,5 @@ public final class CInvertedInputHandler {
         input.left = wasRight;
         input.right = wasLeft;
     }
+
 }

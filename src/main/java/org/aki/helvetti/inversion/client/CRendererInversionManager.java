@@ -3,6 +3,7 @@ package org.aki.helvetti.inversion.client;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.phys.Vec3;
@@ -24,11 +25,7 @@ public final class CRendererInversionManager {
             EntityType.TEXT_DISPLAY
     );
 
-    /** Check if the local player's view is inverted */
-    public static boolean isViewInverted() {
-        LocalPlayer player = Minecraft.getInstance().player;
-        return player != null && CEntityInversionManager.isLogicallyInverted(player);
-    }
+
 
     /** Apply a rotation around the facing axis defined by a Y rotation */
     public static void facialSpaghetti(PoseStack poseStack, float yRot) {
@@ -58,6 +55,8 @@ public final class CRendererInversionManager {
         return origin.add(rotated);
     }
 
+
+
     /** Check if the given entity should be rendered in an inverted manner */
     public static boolean isRenderedInversely(Entity entity) {
         if (entity == null) {
@@ -72,6 +71,27 @@ public final class CRendererInversionManager {
         }
 
         return CEntityInversionManager.isLogicallyInverted(entity);
+    }
+
+
+    
+    private static boolean isViewInverted() {
+        LocalPlayer player = Minecraft.getInstance().player;
+        return player != null && CEntityInversionManager.isLogicallyInverted(player);
+    }
+    private static float targetRotation = 0.0f;
+    private static float currentRotation = 0.0f;
+
+    public static void updateViewRotation(float deltaTicks) {
+        targetRotation = isViewInverted() ? 180.0f : 0.0f;
+        currentRotation = Mth.lerp(deltaTicks, currentRotation, targetRotation);
+        if (Math.abs(targetRotation - currentRotation) < 0.1f) {
+            currentRotation = targetRotation;
+        }
+    }
+
+    public static float getViewRotation() {
+        return currentRotation;
     }
 
 }
