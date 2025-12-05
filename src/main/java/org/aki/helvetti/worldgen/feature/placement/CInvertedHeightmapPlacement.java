@@ -13,7 +13,7 @@ import net.minecraft.world.level.levelgen.placement.PlacementModifierType;
 
 import javax.annotation.Nonnull;
 
-import org.aki.helvetti.CCanvasTags;
+import org.aki.helvetti.registered.CCanvasTags;
 
 import java.util.stream.Stream;
 

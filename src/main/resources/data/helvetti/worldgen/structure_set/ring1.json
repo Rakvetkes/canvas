@@ -14,22 +14,16 @@
             "count": 6
         },
         "anchor": {
-            "type": "helvetti:noise_filtered",
+            "type": "helvetti:basic",
             "salt": 165745296,
             "spacing": 34,
-            "separation": 8,
-            "noise_selector": {
-                "continentalness": [
-                    {"min": -2.0, "max": -0.3}
-                ],
-                "temperature": [
-                    {"min": -2.0, "max": -0.3}
-                ],
-                "humidity": [
-                    {"min": -2.0, "max": -0.3}
-                ]
-            }
+            "separation": 8
         },
-        "landmark_type": "helvetti:basilica"
+        "landmark": {
+            "type": "helvetti:simple",
+            "influential_range": 64,
+            "inner_threshold": 32,
+            "outer_threshold": 64
+        }
     }
 }

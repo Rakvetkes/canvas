@@ -6,7 +6,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.FallingBlock;
 
-import org.aki.helvetti.feature.CBlockInversionManager;
+import org.aki.helvetti.inversion.CBlockInversionManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 

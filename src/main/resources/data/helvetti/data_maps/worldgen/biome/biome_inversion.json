@@ -1,0 +1,9 @@
+{
+    "values": {
+        "helvetti:inverted_basilica": {},
+        "helvetti:inverted_crimson_thicket": { "normal_biome": "helvetti:crimson_thicket" },
+        "helvetti:inverted_golden_woods": { "normal_biome": "helvetti:golden_woods" },
+        "helvetti:inverted_sunlit_grove": { "normal_biome": "helvetti:sunlit_grove" },
+        "helvetti:inverted_vermilion_woods": { "normal_biome": "helvetti:vermilion_woods" }
+    }
+}

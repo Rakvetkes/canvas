@@ -15,9 +15,10 @@ import net.minecraft.world.level.levelgen.feature.configurations.TreeConfigurati
 import net.minecraft.world.level.levelgen.feature.foliageplacers.FoliagePlacer;
 import net.minecraft.world.level.levelgen.feature.trunkplacers.TrunkPlacerType;
 import net.minecraft.world.phys.Vec3;
-import org.aki.helvetti.util.Invertible;
+
 import org.aki.helvetti.worldgen.feature.tree.CInvertableTrunkPlacer;
 import org.aki.helvetti.worldgen.feature.tree.CTreePlacers;
+import org.aki.helvetti.worldgen.feature.tree.util.Invertible;
 
 import javax.annotation.Nonnull;
 import java.util.List;

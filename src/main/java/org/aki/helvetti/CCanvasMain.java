@@ -12,94 +12,93 @@ import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
+import net.neoforged.neoforge.registries.datamaps.RegisterDataMapTypesEvent;
 
-import org.aki.helvetti.block.CBlocks;
-import org.aki.helvetti.entity.CEntityAttachments;
-import org.aki.helvetti.feature.CBlockInversionManager;
-import org.aki.helvetti.item.CItems;
-import org.aki.helvetti.worldgen.CBiomeSources;
-import org.aki.helvetti.worldgen.CChunkGenerators;
+import org.aki.helvetti.inversion.CBlockInversionManager;
+import org.aki.helvetti.inversion.biome.CBiomeDataMaps;
+import org.aki.helvetti.inversion.entity.CEntityAttachments;
+import org.aki.helvetti.registered.CCanvasBlocks;
+import org.aki.helvetti.registered.CCanvasConfig;
+import org.aki.helvetti.registered.CCanvasItems;
+import org.aki.helvetti.worldgen.biomesources.CBiomeSources;
+import org.aki.helvetti.worldgen.chunkgenerators.CChunkGenerators;
 import org.aki.helvetti.worldgen.feature.placement.CPlacementModifiers;
 import org.aki.helvetti.worldgen.feature.tree.CTreePlacers;
 import org.aki.helvetti.worldgen.structure.placement.CStructurePlacementTypes;
-import org.aki.helvetti.worldgen.structure.placement_2.CStructureTypes;
+import org.aki.helvetti.worldgen.structure.structures.CStructureTypes;
+import org.aki.helvetti.worldgen.structure.formations.CFormationTypes;
+import org.aki.helvetti.worldgen.structure.landmarks.CLandmarkTypes;
 import org.slf4j.Logger;
 
 // The value here should match an entry in the META-INF/neoforge.mods.toml file
 @Mod(CCanvasMain.MODID)
 public final class CCanvasMain {
-    // Define mod id in a common place for everything to reference
-    public static final String MODID = "helvetti";
-    // Directly reference a slf4j logger
-    public static final Logger LOGGER = LogUtils.getLogger();
-    // Create a Deferred Register to hold CreativeModeTabs which will all be registered under the "helvetti" namespace
-    public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
 
+    public static final String MODID = "helvetti";
+    public static final Logger LOGGER = LogUtils.getLogger();
+
+    public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> MAIN_TAB = CREATIVE_MODE_TABS.register("main_tab", () -> CreativeModeTab.builder()
             .title(Component.translatable("itemGroup.helvetti")) //The language key for the title of your CreativeModeTab
             .withTabsBefore(CreativeModeTabs.COMBAT)
-            .icon(() -> CItems.FLIPPED_GRASS_BLOCK_ITEM.get().getDefaultInstance())
+            .icon(() -> CCanvasItems.FLIPPED_GRASS_BLOCK_ITEM.get().getDefaultInstance())
             .displayItems((parameters, output) -> {
-                output.accept(CItems.FLIPPED_GRASS_BLOCK_ITEM.get());
-                output.accept(CItems.LELYETIAN_BIRCH_LEAVES_ITEM.get());
-                output.accept(CItems.GLOWING_LELYETIAN_BIRCH_LEAVES_ITEM.get());
-                output.accept(CItems.LELYETIAN_MAPLE_LEAVES_ITEM.get());
+                output.accept(CCanvasItems.FLIPPED_GRASS_BLOCK_ITEM.get());
+                output.accept(CCanvasItems.LELYETIAN_BIRCH_LEAVES_ITEM.get());
+                output.accept(CCanvasItems.GLOWING_LELYETIAN_BIRCH_LEAVES_ITEM.get());
+                output.accept(CCanvasItems.LELYETIAN_MAPLE_LEAVES_ITEM.get());
             }).build());
 
 
     // The constructor for the mod class is the first code that is run when your mod is loaded.
     // FML will recognize some parameter types like IEventBus or ModContainer and pass them in automatically.
     public CCanvasMain(IEventBus modEventBus, ModContainer modContainer) {
-        // Register the commonSetup method for modloading
+        
         modEventBus.addListener(this::commonSetup);
+        modEventBus.addListener(this::registerDataMaps);
 
-        // Register the Deferred Register to the mod event bus so blocks get registered
-        CBlocks.BLOCKS.register(modEventBus);
-
-        // Register the Deferred Register to the mod event bus so items get registered
-        CItems.ITEMS.register(modEventBus);
-
-        // Register the Deferred Register to the mod event bus so tabs get registered
+        // Registries I
+        CCanvasBlocks.register(modEventBus);
+        CCanvasItems.register(modEventBus);
         CREATIVE_MODE_TABS.register(modEventBus);
 
-        // Initialize block inversion flipping list
-        modEventBus.addListener(CBlockInversionManager::registerFlippingList);
-        
-        // Register custom biome sources
+        // Worldgen Registration I
+        CFormationTypes.register(modEventBus);
+        CLandmarkTypes.register(modEventBus);
         CBiomeSources.register(modEventBus);
-        
-        // Register custom chunk generators
         CChunkGenerators.register(modEventBus);
-        
-        // Register custom tree placers
-        CTreePlacers.register(modEventBus);
-        
-        // Register custom placement modifiers
-        CPlacementModifiers.register(modEventBus);
-        
-        // Register custom structure placement types
-        CStructurePlacementTypes.register(modEventBus);
 
-        // Register custom structure types
+        // Worldgen Registration II
+        CTreePlacers.register(modEventBus);
+        CPlacementModifiers.register(modEventBus);
+        CStructurePlacementTypes.register(modEventBus);
         CStructureTypes.register(modEventBus);
-        
-        // Register entity attachments
+
+        // Attachments Registration
         CEntityAttachments.register(modEventBus);
 
-        // Register our mod's ModConfigSpec so that FML can create and load the config file for us
-        modContainer.registerConfig(ModConfig.Type.COMMON, CConfig.SPEC);
+        modContainer.registerConfig(ModConfig.Type.COMMON, CCanvasConfig.SPEC);
+
     }
 
     private void commonSetup(FMLCommonSetupEvent event) {
         // Some common setup code
         LOGGER.info("<Alacy> setting you up");
 
-        java.util.List<? extends String> comments = CConfig.ALACY_COMMENT.get();
+        java.util.List<? extends String> comments = CCanvasConfig.ALACY_COMMENT.get();
         if (comments != null && !comments.isEmpty()) {
             String randomComment = comments.get(new java.util.Random().nextInt(comments.size()));
             LOGGER.info("<Alacy> {}", randomComment);
         }
+
+        // Deferred Registry I
+        CBlockInversionManager.registerFlippingList();
+
     }
 
+    private void registerDataMaps(RegisterDataMapTypesEvent event) {
+        // Register biome inversion data map
+        CBiomeDataMaps.register(event);
+    }
 
 }

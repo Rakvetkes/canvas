@@ -1,9 +1,9 @@
 {
   "type": "helvetti:lelyetia_type",
   "generator": {
-    "type": "helvetti:lelyetia_chunk_generator",
+    "type": "helvetti:lelyetian_chunk_generator",
     "biome_source": {
-      "type": "helvetti:lelyetia_biome_source",
+      "type": "helvetti:lelyetian_biome_source",
       "biomes": [
         {
           "parameters": {
@@ -177,6 +177,12 @@
         }
       ]
     },
-    "settings": "helvetti:lelyetia_noise_gen"
+    "settings": "helvetti:lelyetia_noise_gen",
+    "landmarks": {
+      "structure_sets": [
+        "helvetti:basilica",
+        "helvetti:ring1"
+      ]
+    }
   }
 }

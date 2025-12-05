@@ -6,13 +6,13 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Vec3i;
 import net.minecraft.world.level.chunk.ChunkGeneratorStructureState;
 import net.minecraft.world.level.levelgen.structure.placement.StructurePlacement;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.levelgen.structure.placement.StructurePlacementType;
 
 import javax.annotation.Nonnull;
 
-import org.aki.helvetti.worldgen.structure.placement.formations.CFormation;
+import org.aki.helvetti.worldgen.structure.formations.CFormation;
+import org.aki.helvetti.worldgen.structure.landmarks.CLandmark;
 
 import java.util.List;
 import java.util.Optional;
@@ -35,13 +35,13 @@ public class CRelativePlacement extends StructurePlacement implements CLocatable
             ExclusionZone.CODEC.optionalFieldOf("exclusion_zone").forGetter(CRelativePlacement::exclusionZone),
             CFormation.CODEC.fieldOf("formation").forGetter(CRelativePlacement::formation),
             StructurePlacement.CODEC.fieldOf("anchor").forGetter(CRelativePlacement::anchor),
-            ResourceLocation.CODEC.optionalFieldOf("landmark_type").forGetter(CRelativePlacement::optionalLandmarkType)
+            CLandmark.CODEC.optionalFieldOf("landmark").forGetter(placement -> placement.landmark)
         ).apply(instance, CRelativePlacement::new)
     );
 
     private final CFormation formation;
     private final StructurePlacement anchor;
-    private final Optional<ResourceLocation> landmarkType;
+    private final Optional<CLandmark> landmark;
 
     public CRelativePlacement(
             Vec3i locateOffset,
@@ -51,11 +51,11 @@ public class CRelativePlacement extends StructurePlacement implements CLocatable
             @SuppressWarnings("deprecation") Optional<ExclusionZone> exclusionZone,
             CFormation formation,
             StructurePlacement anchor,
-            Optional<ResourceLocation> landmarkType) {
+            Optional<CLandmark> landmark) {
         super(locateOffset, frequencyReductionMethod, frequency, salt, exclusionZone);
         this.formation = formation;
         this.anchor = anchor;
-        this.landmarkType = landmarkType;
+        this.landmark = landmark;
         if (!(anchor instanceof CLocatablePlacement)) {
             throw new IllegalArgumentException("Anchor structure placement must implement CLocatablePlacement");
         }
@@ -69,13 +69,9 @@ public class CRelativePlacement extends StructurePlacement implements CLocatable
         return this.anchor;
     }
 
-    public Optional<ResourceLocation> optionalLandmarkType() {
-        return this.landmarkType;
-    }
-
     @Override
-    public ResourceLocation landmarkType() {
-        return this.landmarkType.orElse(null);
+    public CLandmark landmark() {
+        return this.landmark.orElse(null);
     }
 
     /**

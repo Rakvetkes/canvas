@@ -10,9 +10,10 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.feature.configurations.TreeConfiguration;
 import net.minecraft.world.level.levelgen.feature.foliageplacers.FoliagePlacer;
 import net.minecraft.world.level.levelgen.feature.trunkplacers.TrunkPlacerType;
-import org.aki.helvetti.util.Invertible;
+
 import org.aki.helvetti.worldgen.feature.tree.CInvertableTrunkPlacer;
 import org.aki.helvetti.worldgen.feature.tree.CTreePlacers;
+import org.aki.helvetti.worldgen.feature.tree.util.Invertible;
 
 import javax.annotation.Nonnull;
 import java.util.List;

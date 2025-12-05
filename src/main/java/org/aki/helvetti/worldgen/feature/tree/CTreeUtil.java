@@ -7,6 +7,8 @@ import net.minecraft.world.level.levelgen.feature.configurations.TreeConfigurati
 
 import javax.annotation.Nonnull;
 
+import org.aki.helvetti.worldgen.feature.featuresize.CTwoLayersFeatureSizePlaceholder;
+
 /**
  * Utility class for tree generation in Lelyetia dimension.
  */

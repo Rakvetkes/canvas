@@ -10,7 +10,8 @@
     "phys.MixinFallingBlockEntity",
     "phys.MixinLivingEntity",
     "phys.MixinPlayer",
-    "phys.MixinServerGamePacketListenerImpl"
+    "phys.MixinServerGamePacketListenerImpl",
+    "world.MixinServerLevel"
   ],
   "client": [
     "render.MixinEntityRenderDispatcher",

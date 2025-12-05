@@ -4,7 +4,6 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Vec3i;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.chunk.ChunkGeneratorStructureState;
 import net.minecraft.world.level.levelgen.structure.placement.RandomSpreadStructurePlacement;
@@ -12,6 +11,9 @@ import net.minecraft.world.level.levelgen.structure.placement.RandomSpreadType;
 import net.minecraft.world.level.levelgen.structure.placement.StructurePlacementType;
 
 import javax.annotation.Nonnull;
+
+import org.aki.helvetti.worldgen.structure.landmarks.CLandmark;
+
 import java.util.Optional;
 import java.util.function.Consumer;
 
@@ -31,11 +33,11 @@ public class CBasicLandmarkPlacement extends RandomSpreadStructurePlacement impl
             Codec.intRange(0, 4096).fieldOf("spacing").forGetter(CBasicLandmarkPlacement::spacing),
             Codec.intRange(0, 4096).fieldOf("separation").forGetter(CBasicLandmarkPlacement::separation),
             RandomSpreadType.CODEC.optionalFieldOf("spread_type", RandomSpreadType.LINEAR).forGetter(CBasicLandmarkPlacement::spreadType),
-            ResourceLocation.CODEC.optionalFieldOf("landmark_type").forGetter(CBasicLandmarkPlacement::optionalLandmarkType)
+            CLandmark.CODEC.optionalFieldOf("landmark").forGetter(placement -> placement.landmark)
         ).apply(instance, CBasicLandmarkPlacement::new)
     );
 
-    private final Optional<ResourceLocation> landmarkType;
+    private final Optional<CLandmark> landmark;
 
     public CBasicLandmarkPlacement(
             Vec3i locateOffset,
@@ -46,21 +48,17 @@ public class CBasicLandmarkPlacement extends RandomSpreadStructurePlacement impl
             int spacing,
             int separation,
             RandomSpreadType spreadType,
-            Optional<ResourceLocation> landmarkType) {
+            Optional<CLandmark> landmarkType) {
         super(locateOffset, frequencyReductionMethod, frequency, salt, exclusionZone, spacing, separation, spreadType);
-        this.landmarkType = landmarkType;
-    }
-
-    public Optional<ResourceLocation> optionalLandmarkType() {
-        return this.landmarkType;
+        this.landmark = landmarkType;
     }
 
     /**
      * Gets the landmark info for this placement.
      */
     @Override
-    public ResourceLocation landmarkType() {
-        return this.landmarkType.orElse(null);
+    public CLandmark landmark() {
+        return this.landmark.orElse(null);
     }
 
     /**

@@ -8,6 +8,7 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.aki.helvetti.CCanvasMain;
+import org.aki.helvetti.worldgen.feature.featuresize.CTwoLayersFeatureSizePlaceholder;
 import org.aki.helvetti.worldgen.feature.tree.lelyetianbirch.CInvertedLelyetianBirchFoliagePlacer;
 import org.aki.helvetti.worldgen.feature.tree.lelyetianbirch.CInvertedLelyetianBirchTrunkPlacer;
 import org.aki.helvetti.worldgen.feature.tree.lelyetianbirch.CLelyetianBirchFoliagePlacer;

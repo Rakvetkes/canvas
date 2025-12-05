@@ -1,9 +1,10 @@
 package org.aki.helvetti.worldgen.structure.placement;
 
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.ChunkPos;
 
 import java.util.function.Consumer;
+
+import org.aki.helvetti.worldgen.structure.landmarks.CLandmark;
 
 /**
  * Interface for structure placements that can be located and queried for their positions.
@@ -12,9 +13,9 @@ import java.util.function.Consumer;
 public interface CLocatablePlacement {
     /**
      * Gets the unique identifier for the type of landmark this placement represents.
-     * @return The landmark type ResourceLocation, or null if not a landmark.
+     * @return The landmark type Holder, or null if not a landmark.
      */
-    ResourceLocation landmarkType();
+    CLandmark landmark();
 
     /**
      * Determines if a structure should be placed in the specified chunk.

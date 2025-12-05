@@ -2,7 +2,7 @@ package org.aki.helvetti.mixin.phys;
 
 import net.minecraft.world.entity.LivingEntity;
 
-import org.aki.helvetti.feature.CEntityInversionManager;
+import org.aki.helvetti.inversion.entity.CEntityInversionManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
