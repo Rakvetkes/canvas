@@ -18,7 +18,8 @@
     "render.MixinEntityRenderer",
     "render.MixinLevelRenderer",
     "render.MixinLivingEntityRenderer",
-    "render.MixinMouseHandler"
+    "control.MixinMouseHandler",
+    "control.MixinLocalPlayer"
   ],
   "injectors": {
     "defaultRequire": 1

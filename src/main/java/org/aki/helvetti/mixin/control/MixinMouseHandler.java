@@ -1,4 +1,4 @@
-package org.aki.helvetti.mixin.render;
+package org.aki.helvetti.mixin.control;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.MouseHandler;
@@ -47,4 +47,8 @@ public abstract class MixinMouseHandler {
             args.set(1, -(double)args.get(1));
         }
     }
+
+
+    
+    // Compatible?
 }

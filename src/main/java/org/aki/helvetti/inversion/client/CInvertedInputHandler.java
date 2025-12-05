@@ -42,18 +42,10 @@ public final class CInvertedInputHandler {
 
         // Invert A/D (left/right strafe)
         float originalLeftImpulse = input.leftImpulse;
+        boolean wasLeft = input.left;
+        boolean wasRight = input.right;
         input.leftImpulse = -originalLeftImpulse;
-
-        // Invert Space/Shift (up/down in flight mode)
-        // In flight mode or swimming, up and down movement should be swapped
-        boolean wasJumping = input.jumping;
-        boolean wasShiftKeyDown = input.shiftKeyDown;
-        
-        // Check if player is flying or swimming
-        if (player.getAbilities().flying || player.isSwimming()) {
-            // Also swap jumping and shiftKeyDown
-            input.jumping = wasShiftKeyDown;
-            input.shiftKeyDown = wasJumping;
-        }
+        input.left = wasRight;
+        input.right = wasLeft;
     }
 }

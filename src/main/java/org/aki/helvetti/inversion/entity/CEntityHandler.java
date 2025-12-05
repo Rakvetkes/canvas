@@ -33,6 +33,8 @@ public final class CEntityHandler {
         // Initialize inversion data on join
         CEntityInversionManager.initializeOnJoin(entity);
 
+
+
         // TODO: [ISSUE] A further research into the bug mechanism
         // When inverted, player will be pushed into ground if reentering game sneaking under a slab
         // This cannot completely solve the issue, still happening randomly
@@ -40,6 +42,7 @@ public final class CEntityHandler {
         if (entity instanceof Player && CEntityInversionManager.isLogicallyInverted(entity)) {
             entity.setPose(Pose.SWIMMING);
         }
+        // I doubt whether the onRefreshDimension() mixin works
     }
 
 }
