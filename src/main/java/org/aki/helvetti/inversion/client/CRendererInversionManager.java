@@ -82,6 +82,12 @@ public final class CRendererInversionManager {
     private static float targetRotation = 0.0f;
     private static float currentRotation = 0.0f;
 
+    public static void resetViewRotation() {
+        float initialRotation = isViewInverted() ? 180.0f : 0.0f;
+        targetRotation = initialRotation;
+        currentRotation = initialRotation;
+    }
+
     public static void updateViewRotation(float deltaTicks) {
         targetRotation = isViewInverted() ? 180.0f : 0.0f;
         currentRotation = Mth.lerp(deltaTicks, currentRotation, targetRotation);

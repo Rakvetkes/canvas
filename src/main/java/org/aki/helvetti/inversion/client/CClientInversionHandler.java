@@ -5,7 +5,7 @@ import net.minecraft.world.entity.player.Player;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.client.event.ClientTickEvent;
+import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
 import net.neoforged.neoforge.client.event.MovementInputUpdateEvent;
 import org.aki.helvetti.CCanvasMain;
 import org.aki.helvetti.inversion.entity.CEntityInversionManager;
@@ -48,6 +48,12 @@ public final class CClientInversionHandler {
         input.leftImpulse = -originalLeftImpulse;
         input.left = wasRight;
         input.right = wasLeft;
+    }
+
+
+    @SubscribeEvent
+    static void onLoggingIn(ClientPlayerNetworkEvent.LoggingIn event) {
+        CRendererInversionManager.resetViewRotation();
     }
 
 }
